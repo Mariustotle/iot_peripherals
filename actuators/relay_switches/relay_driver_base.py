@@ -16,6 +16,12 @@ class RelayDriverBase(ABC):
         self.config = config
         self.simulated = simulated
 
+        if (not self.validate(config)):
+            raise Exception(f'Unable to instanciate Relay Driver [{driver_name}] as the config validation failed.')        
+
+    # Can be overrided in driver specific implimentation for special rules
+    def validate(self, config:RelayConfig) -> bool:  return True
+
     @abstractmethod
     def _switch_on(self):  pass
 
