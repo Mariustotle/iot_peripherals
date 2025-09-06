@@ -2,10 +2,9 @@
 
 import importlib
 
-from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
-
 from peripherals.communication.i2c_expander.i2c_expander_config import I2CExpanderConfig
 from peripherals.communication.i2c_expander.i2c_expander_driver_base import I2CExpanderDriverBase
+from peripherals.communication.i2c_expander.i2c_expander_drivers import I2CExpanderDrivers
 from peripherals.communication.i2c_expander.simulator import I2CExpanderSimulator
 
 
@@ -17,12 +16,12 @@ class IOExpanderFactory:
         if (simulate):
             return I2CExpanderSimulator(config, True)
         
-        driver = config.driver if config.driver is not None else RelayDrivers.Default
+        driver = config.driver if config.driver is not None else I2CExpanderDrivers.Default
         
         class_name = driver.value.upper()
         file_name = driver.value.lower()
         
-        module_path = f"peripherals.commmunication.i2c_expander.drivers.{file_name}" if not simulate else None
+        module_path = f"peripherals.communication.i2c_expander.drivers.{file_name}" if not simulate else None
 
         try:
             module = importlib.import_module(module_path)

@@ -21,7 +21,7 @@ class ADCFactory:
         class_name = driver.value.upper()
         file_name = driver.value.lower()
         
-        module_path = f"peripherals.commmunication.analog_digital_converter.drivers.{file_name}" if not simulate else None
+        module_path = f"peripherals.communication.analog_digital_converter.drivers.{file_name}" if not simulate else None
 
         try:
             module = importlib.import_module(module_path)
