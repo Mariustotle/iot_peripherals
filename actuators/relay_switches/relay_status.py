@@ -1,5 +1,5 @@
 from enum import Enum
 
-class RelayStatus(Enum):
-    On = 1
-    Off = 2
+class RelayStatus(str, Enum):
+    On = "On"
+    Off = "Off"

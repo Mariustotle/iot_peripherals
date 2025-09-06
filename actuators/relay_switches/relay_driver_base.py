@@ -1,23 +1,22 @@
 from abc import ABC, abstractmethod
-
+from typing import Optional
 
 from peripherals.actuators.relay_switches.relay_config import RelayConfig
 from peripherals.actuators.relay_switches.relay_status import RelayStatus
 
-
 class RelayDriverBase(ABC):   
-    driver:str = None
+    driver_name:str = None
     status:RelayStatus = None
     config:RelayConfig = None
     simulated:bool = None
     
-    def __init__(self, driver_name:str, config:RelayConfig, simulated:bool = False):
-        self.driver = driver_name
+    def __init__(self, config:RelayConfig, simulated:bool = False):
+        self.driver_name = config.driver if not simulated else 'N/A'
         self.config = config
-        self.simulated = simulated
+        self.simulated = simulated        
 
         if (not self.validate(config)):
-            raise Exception(f'Unable to instanciate Relay Driver [{driver_name}] as the config validation failed.')        
+            raise Exception(f'Unable to instanciate Relay Driver [{self.driver_name}] as the config validation failed.')        
 
     # Can be overrided in driver specific implimentation for special rules
     def validate(self, config:RelayConfig) -> bool:  return True
@@ -37,7 +36,7 @@ class RelayDriverBase(ABC):
             self.status = RelayStatus.On
 
         except Exception as ex:
-            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver}] on. Details: {ex}")
+            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] on. Details: {ex}")
 
         return self.status
 
@@ -47,7 +46,7 @@ class RelayDriverBase(ABC):
             self.status = RelayStatus.Off
 
         except Exception as ex:
-            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver}] off. Details: {ex}")
+            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
 
         return self.status
 
@@ -62,7 +61,7 @@ class RelayDriverBase(ABC):
                 self.switch_off()
 
         except Exception as ex:
-            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver}] off. Details: {ex}")
+            print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
 
         return self.status
 
