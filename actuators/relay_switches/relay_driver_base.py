@@ -1,19 +1,22 @@
-from abc import ABC, abstractmethod
-from typing import Optional
+from abc import abstractmethod
 
+from peripherals.actuators.actuator import Actuator
+from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.actuators.relay_switches.relay_config import RelayConfig
 from peripherals.actuators.relay_switches.relay_status import RelayStatus
 
-class RelayDriverBase(ABC):   
-    driver_name:str = None
+class RelayDriverBase(Actuator):    
     status:RelayStatus = None
     config:RelayConfig = None
     simulated:bool = None
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
-        self.driver_name = config.driver if not simulated else 'N/A'
+        driver_name = config.driver if not simulated else 'N/A - Simulated'
+
+        super().__init__(ActuatorType.Relay, config.name, driver_name)
+        
         self.config = config
-        self.simulated = simulated        
+        self.simulated = simulated 
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate Relay Driver [{self.driver_name}] as the config validation failed.')        
