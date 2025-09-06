@@ -5,7 +5,9 @@ from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 
 
 class TDSConfig(BaseModel):
-
-    gpio_pin: int = None
-    driver: Optional[TDSDrivers] = None
     name: str = None
+    analog_digital_converter_name: str = None
+    adc_channel: int = None
+    number_of_readings: int = 1
+    delay_between_readings: float = 0.0
+    driver: Optional[TDSDrivers] = None
