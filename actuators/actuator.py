@@ -1,5 +1,3 @@
-from abc import ABC
-
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.peripheral import Peripheral
 from peripherals.peripheral_type import PeripheralType
