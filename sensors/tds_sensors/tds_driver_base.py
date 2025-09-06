@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import asyncio
+from datetime import datetime
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_types import SensorType
 from peripherals.sensors.tds_sensors.tds_config import TDSConfig
@@ -39,6 +40,8 @@ class TDSDriverBase(Sensor):
                 asyncio.wait_for(self.config.delay_between_readings)
 
         average = total / self.config.number_of_readings
+        self.latest_reading = average
+        self.last_updated = datetime.utcnow()
         return average
 
 
