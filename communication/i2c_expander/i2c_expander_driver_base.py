@@ -3,6 +3,7 @@ from abc import abstractmethod
 from peripherals.communication.communication import Communication
 from peripherals.communication.communication_type import CommunicationType
 from peripherals.communication.i2c_expander.i2c_expander_config import I2CExpanderConfig
+from peripherals.communication.i2c_expander.i2c_expander_drivers import I2CExpanderDrivers
 
 
 class I2CExpanderDriverBase(Communication):    
@@ -10,7 +11,8 @@ class I2CExpanderDriverBase(Communication):
     simulated:bool = None
     
     def __init__(self, config:I2CExpanderConfig, simulated:bool = False):
-        driver_name = config.driver.value if not simulated else 'N/A - Simulated'
+        driver = config.driver if config.driver is not None else I2CExpanderDrivers.Default
+        driver_name = driver.value if not simulated else 'N/A - Simulated'
 
         super().__init__(CommunicationType.IOExpander, config.name, driver_name)
         

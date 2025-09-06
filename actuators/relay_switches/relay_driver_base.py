@@ -3,6 +3,7 @@ from abc import abstractmethod
 from peripherals.actuators.actuator import Actuator
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.actuators.relay_switches.relay_config import RelayConfig
+from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
 from peripherals.actuators.relay_switches.relay_status import RelayStatus
 
 class RelayDriverBase(Actuator):    
@@ -11,7 +12,8 @@ class RelayDriverBase(Actuator):
     simulated:bool = None
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
-        driver_name = config.driver.value if not simulated else 'N/A - Simulated'
+        driver = config.driver if config.driver is not None else RelayDrivers.Default
+        driver_name = driver.value if not simulated else 'N/A - Simulated'
 
         super().__init__(ActuatorType.Relay, config.name, driver_name)
         

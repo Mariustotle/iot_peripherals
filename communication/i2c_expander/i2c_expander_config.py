@@ -4,8 +4,10 @@ from typing import Optional
 
 
 class I2CExpanderConfig(BaseModel):
-
-    driver: Optional[I2CExpanderDrivers] = None
     name: str = None
+    driver: Optional[I2CExpanderDrivers] = None
+    i2c_bus: int = None
+    i2c_address: int = None
+    
 
 

@@ -3,6 +3,7 @@ import asyncio
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_types import SensorType
 from peripherals.sensors.tds_sensors.tds_config import TDSConfig
+from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 
 
 class TDSDriverBase(Sensor):
@@ -10,7 +11,8 @@ class TDSDriverBase(Sensor):
     simulated:bool = None
     
     def __init__(self, config:TDSConfig, simulated:bool = False):
-        driver_name = config.driver.value if not simulated else 'N/A - Simulated'
+        driver = config.driver if config.driver is not None else TDSDrivers.Default
+        driver_name = driver.value if not simulated else 'N/A - Simulated'
 
         super().__init__(SensorType.TDS, config.name, driver_name)
         
