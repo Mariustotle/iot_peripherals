@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+from peripherals.actuators.relay_switches.relay_status import RelayStatus
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 
 

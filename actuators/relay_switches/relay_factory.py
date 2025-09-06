@@ -16,7 +16,7 @@ class RelayFactory:
         if (simulate):
             return RelaySimulator(config, True)
         
-        driver = config.driver if config.driver is not None else RelayDrivers.Default
+        driver = config.driver if config.driver is not None else RelayDrivers.Default.name
         
         class_name = driver.value.upper()
         file_name = driver.value.lower()

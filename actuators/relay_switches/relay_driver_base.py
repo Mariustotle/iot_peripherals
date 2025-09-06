@@ -11,7 +11,7 @@ class RelayDriverBase(Actuator):
     simulated:bool = None
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
-        driver_name = config.driver if not simulated else 'N/A - Simulated'
+        driver_name = config.driver.value if not simulated else 'N/A - Simulated'
 
         super().__init__(ActuatorType.Relay, config.name, driver_name)
         
@@ -53,7 +53,6 @@ class RelayDriverBase(Actuator):
 
         return self.status
 
-
     def toggle(self):
         try:
             
@@ -68,4 +67,5 @@ class RelayDriverBase(Actuator):
 
         return self.status
 
-
+    def get_description(self) -> str: 
+        return f"Peripheral: [{self.peripheral_type.name}], Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}] with configuration of GPIO Pin [{self.config.gpio_pin}] with default status of [{self.config.default_status.value}]."
