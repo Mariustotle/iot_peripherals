@@ -1,6 +1,12 @@
+from typing import List as TypingList
+from peripherals.actuators.action_decorator import ActuatorAction
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.peripheral import Peripheral
 from peripherals.peripheral_type import PeripheralType
+from peripherals.actuators.action_decorator  import ActuatorAction, derive_params_from_signature
+
+import inspect
+
 
 class Actuator(Peripheral):   
     actuator_type: ActuatorType = None
@@ -11,3 +17,36 @@ class Actuator(Peripheral):
 
         self.actuator_type = actuator_type
         self.driver_name = driver_name
+        self._actions: list[ActuatorAction] = []
+        self._autowire_actions()  # <-- reflect & register
+
+    @property
+    def actions(self) -> list[ActuatorAction]:
+        return list(self._actions)
+    
+    def _register(self, action: ActuatorAction) -> None:
+        for i, a in enumerate(self._actions):
+            if a.key == action.key:
+                self._actions[i] = action
+                break
+        else:
+            self._actions.append(action)    
+
+    def _autowire_actions(self) -> None:
+        # find bound methods with @action
+        for _, member in inspect.getmembers(self, predicate=inspect.ismethod):
+            meta = getattr(member, "_menu_action_meta", None)
+            is_action = getattr(member, "_is_menu_action", False)
+            if not is_action or meta is None:
+                continue
+
+            params = meta["params"]
+            if params is None:
+                params = derive_params_from_signature(member)
+            self._register(ActuatorAction(
+                key=meta["key"],
+                label=meta["label"],
+                description=meta["description"],
+                func=member,
+                params=params
+            ))

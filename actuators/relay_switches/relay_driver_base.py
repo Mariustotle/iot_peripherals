@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from peripherals.actuators.action_decorator import action
 from peripherals.actuators.actuator import Actuator
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.actuators.relay_switches.relay_config import RelayConfig
@@ -35,6 +36,14 @@ class RelayDriverBase(Actuator):
     def get_current_status(self) -> 'RelayStatus':
         return self.status
 
+    @action(label="Switch to On/OFF", description="Set relay to a specific state")    
+    def switch(self, status:RelayStatus):
+        if self.get_current_status() == status:
+            return
+        
+        self.toggle()     
+
+    @action(label="Switch On", description="Set relay to an On state")    
     def switch_on(self) -> 'RelayStatus':
         try:
             self._switch_on()
@@ -45,6 +54,7 @@ class RelayDriverBase(Actuator):
 
         return self.status
 
+    @action(label="Switch OFF", description="Set relay to an OFF state")    
     def switch_off(self) -> 'RelayStatus':
         try:
             self._switch_off()
@@ -54,7 +64,8 @@ class RelayDriverBase(Actuator):
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
 
         return self.status
-
+    
+    @action(label="Toggle to the opposite", description="Set relay state to the opposite that it is currently") 
     def toggle(self):
         try:
             
