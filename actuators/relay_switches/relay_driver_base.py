@@ -38,10 +38,17 @@ class RelayDriverBase(Actuator):
 
     @action(label="Switch to On/OFF", description="Set relay to a specific state")    
     def switch(self, status:RelayStatus):
-        if self.get_current_status() == status:
+        if self.status == status:
             return
         
-        self.toggle()     
+        if self.status == None:
+            if status == RelayStatus.On:
+                self.switch_on()
+            else:
+                self.switch_off()
+                
+        else:
+            self.toggle()     
 
     @action(label="Switch On", description="Set relay to an On state")    
     def switch_on(self) -> 'RelayStatus':
