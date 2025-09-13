@@ -2,7 +2,8 @@ from abc import abstractmethod
 import asyncio
 
 from peripherals.sensors.sensor import Sensor
-from peripherals.sensors.sensor_types import SensorType
+from peripherals.sensors.sensor_reading import SensorReading
+from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.tds_config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 
@@ -29,19 +30,18 @@ class TDSDriverBase(Sensor):
     @abstractmethod
     async def read_once(self) -> float: pass
 
-    async def read(self) -> float:
+    async def read(self) -> SensorReading[float]:
         total = 0.0
 
         for take in range (0, self.config.number_of_readings):
             total += await self.read_once()
 
             if (take < self.config.number_of_readings and self.config.delay_between_readings > 0):
-                import time
-                asyncio.wait_for(self.config.delay_between_readings)
+                await asyncio.sleep(self.config.delay_between_readings)
 
         average = total / self.config.number_of_readings
 
-        return average
+        return SensorReading.create(average, self)
 
 
     def get_description(self) -> str: 

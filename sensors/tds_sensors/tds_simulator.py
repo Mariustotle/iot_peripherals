@@ -4,8 +4,10 @@ import random
 
 
 class TDSSimulator(TDSDriverBase):
-    min_value: float = 150.0
-    max_value: float = 1000.0
+    min_value: int = 150
+    max_value: int = 1000
 
     async def read_once(self) -> float:
-        return random.randint(self.min_value, self.max_value)
+        random_reading = random.randint(self.min_value, self.max_value)
+
+        return float(random_reading)

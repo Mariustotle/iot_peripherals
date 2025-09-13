@@ -8,7 +8,6 @@ from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
 from peripherals.actuators.relay_switches.relay_status import RelayStatus
 
 class RelayDriverBase(Actuator):    
-    status:RelayStatus = None
     config:RelayConfig = None
     simulated:bool = None
     
@@ -16,7 +15,7 @@ class RelayDriverBase(Actuator):
         driver = config.driver if config.driver is not None else RelayDrivers.Default
         driver_name = driver.value if not simulated else 'N/A - Simulated'
 
-        super().__init__(ActuatorType.Relay, config.name, driver_name)
+        super().__init__(ActuatorType.Relay, config.name, driver_name, status=config.default_status)
         
         self.config = config
         self.simulated = simulated 
