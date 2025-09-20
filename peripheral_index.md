@@ -13,7 +13,7 @@ These are peripherals that do things.
 
 Type                                                    | Description
 -------------                                           | ---------------
-[Relay Switch](actuators/relay_switches/readme.md)      | Two start state with LED 
+[Relay Switch](actuators/relay_switches/README.md)      | Two start state with LED 
 
 
 ## Communication Modules
