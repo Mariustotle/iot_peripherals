@@ -54,7 +54,8 @@ class Actuator(Peripheral):
 
     @property
     def description(self) -> str:
-        return self.__str__()    
+        return self.__str__() 
+    
     
     def __str__(self):
         current_status = ''
