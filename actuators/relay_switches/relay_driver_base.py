@@ -10,6 +10,8 @@ from peripherals.actuators.relay_switches.relay_status import RelayStatus
 class RelayDriverBase(Actuator):    
     config:RelayConfig = None
     simulated:bool = None
+    relay_pin:int = None
+
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
         driver = config.driver if config.driver is not None else RelayDrivers.Default
@@ -19,6 +21,7 @@ class RelayDriverBase(Actuator):
         
         self.config = config
         self.simulated = simulated 
+        self.relay_pin = config.gpio_pin        
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate Relay Driver [{self.driver_name}] as the config validation failed.')        
