@@ -2,8 +2,6 @@
 A relay module is an electrically operated switch that allows a low-power device (like a Raspberry Pi or Arduino) to control a high-power circuit (such as lamps, motors, or appliances).
 
 
-
-
 ## Overview
 
 ### Input side (low-voltage control)
@@ -20,12 +18,11 @@ A relay module is an electrically operated switch that allows a low-power device
 
 ### Indicators
 - Green LED → Power indicator (always on when VCC is supplied)
-
-Red LED → Relay status (on when GPIO drives relay active)
+- Red LED → Relay status (on when GPIO drives relay active)
 
 ⚠️ Warning: While the control side is safe (5V logic), the relay can switch dangerous mains voltage. Extreme caution is required when connecting AC devices.
 
-## ⚙️ Connection
+## Connection
 
 1. Board Power: Connect VCC → 5V and GND → GND on the Raspberry Pi.
 2. Signal Pin: Connect IN → GPIO (e.g., GPIO17 / Pin 11).   
@@ -36,7 +33,7 @@ These modules are usually active LOW i.e., That means:
 - GPIO LOW (0V) → Relay ON (red LED on, NO closes to COM).
 - GPIO HIGH (3.3V) → Relay OFF (red LED off, NO open).
 
-## Configuration
+## ⚙️ Configuration
 
 ```json
 {
