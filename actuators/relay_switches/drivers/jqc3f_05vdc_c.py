@@ -30,10 +30,10 @@ class JQC3F_05VDC_C(RelayDriverBase):
         else:
             return GPIOStatus.High if self.config.is_low_voltage_trigger else GPIOStatus.Low
     
-    def __get_gpio_direction(self, relay_status:OnOffStatus) -> 'InputOutput':
+    def __get_gpio_direction(self, power_status:OnOffStatus) -> 'InputOutput':
         if self.switch_method == SwitchMethod.Level:
             return InputOutput.Output
-        elif self.power_status == OnOffStatus.On:
+        elif power_status == OnOffStatus.On:
             return InputOutput.Output
         else:
             return InputOutput.Input
@@ -65,6 +65,7 @@ class JQC3F_05VDC_C(RelayDriverBase):
                 raise Exception('Direction control is only supported for low voltage trigger relays.')
             
             self.switch_method = SwitchMethod.Direction
+            self.direction = self.__get_gpio_direction(self.config.default_power_status)
         
         self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
         GPIO.setup(self.relay_pin, self.gpio_direction, initial=self.gpio_status)
