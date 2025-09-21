@@ -68,7 +68,6 @@ class RelayDriverBase(Actuator):
                 self.relay_status = OnOffStatus.Off
 
             self.power_status = OnOffStatus.On
-            print(f'[{self.name}] Power is >> ON <<  (Relay status [{self.relay_status.name}]).')
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] on. Details: {ex}")
@@ -87,7 +86,6 @@ class RelayDriverBase(Actuator):
                 self.relay_status = OnOffStatus.On
 
             self.power_status = OnOffStatus.Off
-            print(f'[{self.name}] Power is >> OFF << (Relay status [{self.relay_status.name}]).')
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
@@ -110,4 +108,4 @@ class RelayDriverBase(Actuator):
         return self.power_status
 
     def __str__(self):
-        return f'{self.name}: Power Status = [{self.power_status.name}] and Relay Status = [{self.relay_status.name}] (Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}])'
+        return f'{self.name}: >>> Power Status = [{self.power_status.name}] and Relay Status = [{self.relay_status.name}] <<< Actuator: [{self.actuator_type.name}] | Driver: [{self.driver_name}] | Id Low Level Trigger: [{self.config.is_low_voltage_trigger}]'

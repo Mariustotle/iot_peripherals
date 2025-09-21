@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from common.environment import Env
 from peripherals.peripheral_type import PeripheralType
 
 
@@ -16,5 +17,8 @@ class Peripheral(ABC):
 
     @abstractmethod
     def get_description(self) -> str: pass
+
+    def initialize(self):
+        Env.print(f'Default initialization >> {self}')
 
     def cleanup(self):  pass
