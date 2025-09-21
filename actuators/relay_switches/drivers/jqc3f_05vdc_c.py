@@ -63,7 +63,7 @@ class JQC3F_05VDC_C(RelayDriverBase):
             
             if (self.config.use_direction_control):
 
-                if (not self.config.is_low_voltage_trigger):
+                if (self.config.is_low_voltage_trigger == False):
                     raise Exception('Direction control is only supported for low voltage trigger relays.')
                 
                 self.switch_method = SwitchMethod.Direction
