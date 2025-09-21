@@ -86,7 +86,7 @@ class JQC3F_05VDC_C(RelayDriverBase):
             if (self.switch_method == SwitchMethod.Level):
                 GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.gpio_status)
             else: 
-                self._set_relay_properties(self.config.default_power_status, OnOffStatus.Off)
+                self._set_relay_properties(OnOffStatus.Off)
 
             return True
 
