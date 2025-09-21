@@ -1,6 +1,7 @@
 # Relay Setup
 A relay module is an electrically operated switch that allows a low-power device (like a Raspberry Pi or Arduino) to control a high-power circuit (such as lamps, motors, or appliances).
 
+![Relay Module Picture](https://github.com/Mariustotle/iot_peripherals/blob/b068230ea4bc71094f27b9eb0d8d2f8054ece865/actuators/relay_switches/resources/relay_module.png?raw=true "Low Voltage Relay Module")
 
 ## Overview
 
