@@ -3,10 +3,10 @@ from peripherals.actuators.relay_switches.relay_driver_base import RelayDriverBa
 
 class RelaySimulator(RelayDriverBase):
 
-    def _switch_on(self):
-        print('Simulate switching relay ON')
+    def _switch_relay_on(self):
+        print('Simulate switching relay ON...')
 
-    def _switch_off(self):
-        print('Simulate switching relay OFF')
+    def _switch_relay_off(self):
+        print('Simulate switching relay OFF...')
 
 

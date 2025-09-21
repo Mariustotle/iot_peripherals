@@ -5,23 +5,28 @@ from peripherals.actuators.actuator import Actuator
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.actuators.relay_switches.relay_config import RelayConfig
 from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
-from peripherals.actuators.relay_switches.relay_status import RelayStatus
+from peripherals.contracts.on_off_status import OnOffStatus
 
 class RelayDriverBase(Actuator):    
     config:RelayConfig = None
     simulated:bool = None
     relay_pin:int = None
+    relay_status:OnOffStatus = None         # The on/off status of the relay
+    power_status:OnOffStatus = None         # Whether the power is on (based on relay status and default state)
 
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
         driver = config.driver if config.driver is not None else RelayDrivers.Default
         driver_name = driver.value if not simulated else 'N/A - Simulated'
 
-        super().__init__(ActuatorType.Relay, config.name, driver_name, status=config.default_status)
+        super().__init__(ActuatorType.Relay, config.name, driver_name, status=config.default_power_status)
         
         self.config = config
         self.simulated = simulated 
-        self.relay_pin = config.gpio_pin        
+        self.relay_pin = config.gpio_pin
+
+        self.relay_status = OnOffStatus.Off
+        self.power_status = OnOffStatus.Off if config.default_power_status == OnOffStatus.Off else OnOffStatus.On
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate Relay Driver [{self.driver_name}] as the config validation failed.')        
@@ -30,64 +35,79 @@ class RelayDriverBase(Actuator):
     def validate(self, config:RelayConfig) -> bool:  return True
 
     @abstractmethod
-    def _switch_on(self):  pass
+    def _switch_relay_on(self):  pass
 
     @abstractmethod
-    def _switch_off(self):  pass
+    def _switch_relay_off(self):  pass
 
-    def get_current_status(self) -> 'RelayStatus':
-        return self.status
+    @property
+    def get_relay_status(self) -> 'OnOffStatus':
+        return self.relay_status
+    
+    @property
+    def get_power_status(self) -> 'OnOffStatus':
+        return self.power_status
 
-    @action(label="Switch to On/OFF", description="Set relay to a specific state")    
-    def switch(self, status:RelayStatus):
-        if self.status == status:
+    @action(label="Switch power On/OFF", description="Set relay to a specific state")    
+    def switch(self, power_status:OnOffStatus):
+        if self.power_status == power_status:
             return
-        
-        if self.status == None:
-            if status == RelayStatus.On:
-                self.switch_on()
-            else:
-                self.switch_off()
                 
         else:
             self.toggle()     
 
     @action(label="Switch On", description="Set relay to an On state")    
-    def switch_on(self) -> 'RelayStatus':
+    def switch_power_on(self) -> 'OnOffStatus':
         try:
-            self._switch_on()
-            self.status = RelayStatus.On
+
+            if self.config.default_power_status == OnOffStatus.Off:
+                self._switch_relay_on()
+                self.relay_status = OnOffStatus.On
+            else:
+                self._switch_relay_off()
+                self.relay_status = OnOffStatus.Off
+
+            self.power_status = OnOffStatus.On
+            print(f'[{self.name}] Power is >> ON <<  (Relay status [{self.relay_status.name}]).')
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] on. Details: {ex}")
 
-        return self.status
+        return self.power_status
 
     @action(label="Switch OFF", description="Set relay to an OFF state")    
-    def switch_off(self) -> 'RelayStatus':
+    def switch_power_off(self) -> 'OnOffStatus':
         try:
-            self._switch_off()
-            self.status = RelayStatus.Off
+
+            if self.config.default_power_status == OnOffStatus.Off:
+                self._switch_relay_off()
+                self.relay_status = OnOffStatus.Off
+            else:
+                self._switch_relay_on()
+                self.relay_status = OnOffStatus.On
+
+            self.power_status = OnOffStatus.Off
+            print(f'[{self.name}] Power is >> OFF << (Relay status [{self.relay_status.name}]).')
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
 
-        return self.status
+        return self.power_status
     
     @action(label="Toggle to the opposite", description="Set relay state to the opposite that it is currently") 
     def toggle(self):
         try:
             
-            switch_on = True if self.status == RelayStatus.Off else False
+            switch_on = True if self.power_status == OnOffStatus.Off else False
             if switch_on:
-                self.switch_on()
+                self.switch_power_on()
             else:
-                self.switch_off()
+                self.switch_power_off()
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")
 
-        return self.status
+        return self.power_status
 
-    def get_description(self) -> str: 
-        return f"Peripheral: [{self.peripheral_type.name}], Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}] with configuration of GPIO Pin [{self.config.gpio_pin}] with default status of [{self.config.default_status.value}]."
+    def __str__(self):
+        return f'{self.name}: Power Status = [{self.power_status.name}] and Relay Status = [{self.relay_status.name}] (Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}])'

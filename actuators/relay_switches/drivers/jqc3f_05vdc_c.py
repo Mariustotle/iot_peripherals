@@ -1,27 +1,30 @@
 
+from typing import Literal
 import RPi.GPIO as GPIO
-import time
 
+from peripherals.actuators.relay_switches.relay_config import RelayConfig
 from peripherals.actuators.relay_switches.relay_driver_base import RelayDriverBase
-from peripherals.actuators.relay_switches.relay_status import RelayStatus
+from peripherals.contracts.on_off_status import OnOffStatus
 
 class JQC3F_05VDC_C(RelayDriverBase):
 
-    def __init__(self, config, simulated = False):
+    def __gpio_value(self, relay_status:OnOffStatus) -> Literal[0]:
+        if relay_status == OnOffStatus.On:
+            return GPIO.LOW if self.config.is_low_voltage_trigger else GPIO.HIGH
+        else:
+            return GPIO.HIGH if self.config.is_low_voltage_trigger else GPIO.LOW
+
+    def __init__(self, config:RelayConfig, simulated = False):
         super().__init__(config, simulated)
 
-        default_state = GPIO.HIGH if config.default_status == RelayStatus.OFF else GPIO.LOW
-
         GPIO.setmode(GPIO.BCM)   # BCM pin numbering
-        GPIO.setup(self.relay_pin, GPIO.OUT, initial=default_state)
+        GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.__gpio_value(OnOffStatus.Off))  
 
-    def _switch_on(self):
-        print('[JQC3F_05VDC_C] switching relay ON')
-        GPIO.output(self.relay_pin, GPIO.HIGH)
+    def _switch_relay_on(self):
+        GPIO.output(self.relay_pin, self.__gpio_value(OnOffStatus.On))
 
-    def _switch_off(self):        
-        print('[JQC3F_05VDC_C] switching relay OFF')
-        GPIO.output(self.relay_pin, GPIO.LOW)
+    def _switch_relay_off(self):        
+        GPIO.output(self.relay_pin, self.__gpio_value(OnOffStatus.Off))
 
     def cleanup(self):
         GPIO.cleanup()

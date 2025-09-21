@@ -46,8 +46,9 @@ These modules are usually active LOW i.e., That means:
             {
                 "name": "Bedroom Light",
                 "driver": "jqc3f_05vdc_c",
-                "default_status": "Off",
-                "gpio_pin": 18                           
+                "default_power_status": "OfF",
+                "gpio_pin": 18,
+                "is_low_voltage_trigger": true                    
             }
         ]
     }

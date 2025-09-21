@@ -52,14 +52,8 @@ class Actuator(Peripheral):
                 params=params
             ))
 
-    @property
-    def description(self) -> str:
-        return self.__str__() 
-    
-    
-    def __str__(self):
-        current_status = ''
-        if self.status is not None:
-            current_status = f' with current status of [{self.status}]'
+    def get_description(self) -> str:
+        return f'{self.name}. Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}]'
 
-        return f'{self.name}{current_status} (Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}])'
+    def __str__(self):
+        return f'{self.name}. Actuator: [{self.actuator_type.name}], Driver: [{self.driver_name}]. Override "__str__(self)" in derived class to include current status.'
