@@ -18,7 +18,8 @@ class Peripheral(ABC):
     @abstractmethod
     def get_description(self) -> str: pass
 
-    def initialize(self):
+    def initialize(self) -> bool:
         Env.print(f'Default initialization >> {self}')
+        return True
 
     def cleanup(self):  pass

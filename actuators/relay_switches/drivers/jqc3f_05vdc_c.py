@@ -30,10 +30,11 @@ class JQC3F_05VDC_C(RelayDriverBase):
         else:
             return GPIOStatus.High if self.config.is_low_voltage_trigger else GPIOStatus.Low
     
-    def __get_gpio_direction(self, power_status:OnOffStatus) -> 'InputOutput':
+    def __get_gpio_direction(self, relay_status:OnOffStatus) -> 'InputOutput':
         if self.switch_method == SwitchMethod.Level:
             return InputOutput.Output
-        elif power_status == OnOffStatus.On:
+        
+        if relay_status == OnOffStatus.On:
             return InputOutput.Output
         else:
             return InputOutput.Input
@@ -43,15 +44,27 @@ class JQC3F_05VDC_C(RelayDriverBase):
         super().__init__(config, simulated) 
 
 
-    def _set_relay_properties(self, power_status:OnOffStatus, relay_status:OnOffStatus):
+    def _set_relay_properties(self, relay_status:OnOffStatus):
 
-        self.gpio_level = self.__get_gpio_level(relay_status)
+        # First set direction in case it is output
+        if (self.switch_method == SwitchMethod.Direction):
+
+            # If changing from off to on, set level first before changing direction
+            if (relay_status == OnOffStatus.Off and self.relay_status == OnOffStatus.On):
+                self.relay_status = relay_status
+                self.gpio_level = self.__get_gpio_level(self.relay_status)
+                GPIO.output(self.relay_pin, self.gpio_status)
+
+            self.direction = self.__get_gpio_direction(relay_status)
+            GPIO.setup(self.relay_pin, self.gpio_direction)
+
+            if (self.direction == InputOutput.Input):
+                return  # If input, do not change level (Not allowed for INPUT)
+        
+        self.relay_status = relay_status
+        self.gpio_level = self.__get_gpio_level(self.relay_status)
         GPIO.output(self.relay_pin, self.gpio_status)
 
-        if (self.switch_method == SwitchMethod.Direction):
-            self.direction = self.__get_gpio_direction(power_status)
-            GPIO.setup(self.relay_pin, self.gpio_direction)
-        
 
     def initialize(self) -> bool:
 
@@ -73,8 +86,7 @@ class JQC3F_05VDC_C(RelayDriverBase):
             if (self.switch_method == SwitchMethod.Level):
                 GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.gpio_status)
             else: 
-                GPIO.output(self.relay_pin, self.gpio_status)
-                GPIO.setup(self.relay_pin, self.gpio_direction)
+                self._set_relay_properties(self.config.default_power_status, OnOffStatus.Off)
 
             return True
 

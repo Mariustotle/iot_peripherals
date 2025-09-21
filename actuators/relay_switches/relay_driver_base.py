@@ -34,15 +34,8 @@ class RelayDriverBase(Actuator):
     # Can be overrided in driver specific implimentation for special rules
     def validate(self, config:RelayConfig) -> bool:  return True
 
-    '''
     @abstractmethod
-    def _switch_relay_on(self):  pass
-
-    @abstractmethod
-    def _switch_relay_off(self):  pass
-    '''
-
-    def _set_relay_properties(self, power_status:OnOffStatus, relay_status:OnOffStatus):  pass
+    def _set_relay_properties(self, relay_status:OnOffStatus):  pass
 
     @action(label="Switch power On/OFF", description="Set relay to a specific state")    
     def switch(self, power_status:OnOffStatus):
@@ -63,7 +56,7 @@ class RelayDriverBase(Actuator):
             else:
                 tmp_relay_status = OnOffStatus.Off
 
-            self._set_relay_properties(tmp_power_status, tmp_relay_status)
+            self._set_relay_properties(tmp_relay_status)
 
             self.power_status = tmp_power_status
             self.relay_status = tmp_relay_status
@@ -85,7 +78,7 @@ class RelayDriverBase(Actuator):
             else:
                 tmp_relay_status = OnOffStatus.On
 
-            self._set_relay_properties(tmp_power_status, tmp_relay_status)
+            self._set_relay_properties(tmp_relay_status)
 
             self.power_status = tmp_power_status
             self.relay_status = tmp_relay_status
