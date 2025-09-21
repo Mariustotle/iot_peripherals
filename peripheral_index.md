@@ -7,13 +7,18 @@ These are peripherals that measure things.
 Type                                                    | Description
 -------------                                           | ---------------
 [TDS](sensors/tds_sensors/README.md)                    | Measure particles
+Water Level | Measure when a specific water level is reached
+Temperature & Humidity | Measuring the temperature and humidity
+
 
 ## Actuators
 These are peripherals that do things.
 
 Type                                                    | Description
 -------------                                           | ---------------
-[Relay Switch](actuators/relay_switches/README.md)      | Two start state with LED 
+[Relay Switch](actuators/relay_switches/README.md)      | Two start state with LED
+Buttons  | Action through press
+Pumps | Pumping specific qualities of liquid
 
 
 ## Communication Modules
