@@ -41,14 +41,21 @@ These modules are usually active LOW i.e., That means:
 ```json
 {
     "Actuators" : {
-        "RelaySwitches" : 
+      "RelaySwitches" : 
         [
             {
                 "name": "Bedroom Light",
+                "driver": null, /* Default driver */
+                "default_power_status": null,  /* Default is OFF */
+                "gpio_pin": 12, /* GPIO PIN Address */
+                "is_low_voltage_trigger": null /* Default is true */               
+            },
+            {
+                "name": "Outside Light",
                 "driver": "jqc3f_05vdc_c",
-                "default_power_status": "OfF",
-                "gpio_pin": 18,
-                "is_low_voltage_trigger": true                    
+                "default_power_status": "On",
+                "pin_position": 12,  /* PIN Position Address */
+                "is_low_voltage_trigger": false    
             }
         ]
     }

@@ -6,6 +6,7 @@ from peripherals.contracts.on_off_status import OnOffStatus
 class RelayConfig(BaseModel):
     name: str = None
     driver: Optional[RelayDrivers] = None
-    default_power_status: OnOffStatus = None
-    gpio_pin: int = None
-    is_low_voltage_trigger: bool = None
+    default_power_status: OnOffStatus = OnOffStatus.Off
+    gpio_pin: Optional[int] = None
+    pin_position: Optional[int] = None
+    is_low_voltage_trigger: bool = True

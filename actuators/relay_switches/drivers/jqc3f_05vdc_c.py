@@ -17,7 +17,15 @@ class JQC3F_05VDC_C(RelayDriverBase):
     def __init__(self, config:RelayConfig, simulated = False):
         super().__init__(config, simulated)
 
-        GPIO.setmode(GPIO.BCM)   # BCM pin numbering
+        if (self.config.gpio_pin is not None):
+            GPIO.setmode(GPIO.BCM)   # BCM pin numbering
+            self.relay_pin = self.config.gpio_pin
+        elif (self.config.pin_position is not None):
+            GPIO.setmode(GPIO.BOARD) # BOARD pin numbering
+            self.relay_pin = self.config.pin_position
+        else:
+            raise Exception("Pin configurtation incorrect, please set either gpio_pin (GPIO Numbering) or pin_position (PIN position numbering).")
+
         GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.__gpio_value(OnOffStatus.Off))  
 
     def _switch_relay_on(self):
