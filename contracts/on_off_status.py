@@ -1,6 +1,7 @@
 from enum import Enum
 
 class OnOffStatus(str, Enum):
+    Unkown = "Unknown"
     On = "On"
     Off = "Off"
 

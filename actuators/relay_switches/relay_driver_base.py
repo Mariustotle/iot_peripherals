@@ -34,19 +34,15 @@ class RelayDriverBase(Actuator):
     # Can be overrided in driver specific implimentation for special rules
     def validate(self, config:RelayConfig) -> bool:  return True
 
+    '''
     @abstractmethod
     def _switch_relay_on(self):  pass
 
     @abstractmethod
     def _switch_relay_off(self):  pass
+    '''
 
-    @property
-    def get_relay_status(self) -> 'OnOffStatus':
-        return self.relay_status
-    
-    @property
-    def get_power_status(self) -> 'OnOffStatus':
-        return self.power_status
+    def _set_relay_properties(self, power_status:OnOffStatus, relay_status:OnOffStatus):  pass
 
     @action(label="Switch power On/OFF", description="Set relay to a specific state")    
     def switch(self, power_status:OnOffStatus):
@@ -59,15 +55,19 @@ class RelayDriverBase(Actuator):
     @action(label="Switch On", description="Set relay to an On state")    
     def switch_power_on(self) -> 'OnOffStatus':
         try:
+            tmp_power_status = OnOffStatus.On
+            tmp_relay_status = OnOffStatus.Unkown
 
-            if self.config.default_power_status == OnOffStatus.Off:
-                self._switch_relay_on()
-                self.relay_status = OnOffStatus.On
+            if self.config.default_power_status == OnOffStatus.Off:                
+                tmp_relay_status = OnOffStatus.On                
             else:
-                self._switch_relay_off()
-                self.relay_status = OnOffStatus.Off
+                tmp_relay_status = OnOffStatus.Off
 
-            self.power_status = OnOffStatus.On
+            self._set_relay_properties(tmp_power_status, tmp_relay_status)
+
+            self.power_status = tmp_power_status
+            self.relay_status = tmp_relay_status
+
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] on. Details: {ex}")
@@ -77,15 +77,18 @@ class RelayDriverBase(Actuator):
     @action(label="Switch OFF", description="Set relay to an OFF state")    
     def switch_power_off(self) -> 'OnOffStatus':
         try:
+            tmp_power_status = OnOffStatus.Off
+            tmp_relay_status = OnOffStatus.Unkown
 
-            if self.config.default_power_status == OnOffStatus.Off:
-                self._switch_relay_off()
-                self.relay_status = OnOffStatus.Off
+            if self.config.default_power_status == OnOffStatus.Off:                
+                tmp_relay_status = OnOffStatus.Off                
             else:
-                self._switch_relay_on()
-                self.relay_status = OnOffStatus.On
+                tmp_relay_status = OnOffStatus.On
 
-            self.power_status = OnOffStatus.Off
+            self._set_relay_properties(tmp_power_status, tmp_relay_status)
+
+            self.power_status = tmp_power_status
+            self.relay_status = tmp_relay_status
 
         except Exception as ex:
             print(f"Oops! {ex.__class__} occurred while trying to switch [{self.driver_name}] off. Details: {ex}")

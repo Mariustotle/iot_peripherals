@@ -8,5 +8,5 @@ class RelayConfig(BaseModel):
     driver: Optional[RelayDrivers] = None
     default_power_status: OnOffStatus = OnOffStatus.Off
     gpio_pin: Optional[int] = None
-    pin_position: Optional[int] = None
     is_low_voltage_trigger: bool = True
+    use_direction_control: bool = False
