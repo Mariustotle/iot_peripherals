@@ -69,7 +69,12 @@ class JQC3F_05VDC_C(RelayDriverBase):
             
             self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
             print(f'Initializing {self.name} on GPIO Pin {self.relay_pin} using [{self.switch_method}] method with [{self.gpio_level}] level and [{self.direction}] direction.')
-            GPIO.setup(self.relay_pin, self.gpio_direction, initial=self.gpio_status)
+
+            if (self.switch_method == SwitchMethod.Level):
+                GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.gpio_status)
+            else: 
+                GPIO.output(self.relay_pin, self.gpio_status)
+                GPIO.setup(self.relay_pin, self.gpio_direction)
 
             return True
 
