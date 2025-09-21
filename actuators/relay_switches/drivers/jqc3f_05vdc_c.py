@@ -53,24 +53,34 @@ class JQC3F_05VDC_C(RelayDriverBase):
             GPIO.setup(self.relay_pin, self.gpio_direction)
         
 
-    def initialize(self) -> str:
+    def initialize(self) -> bool:
 
-        GPIO.setmode(GPIO.BCM)   # BCM pin numbering
-        self.board_type = 'BCM'
-        self.relay_pin = self.config.gpio_pin
-        
-        if (self.config.use_direction_control):
+        try:
 
-            if (not self.config.is_low_voltage_trigger):
-                raise Exception('Direction control is only supported for low voltage trigger relays.')
+            GPIO.setmode(GPIO.BCM)   # BCM pin numbering
+            self.board_type = 'BCM'
+            self.relay_pin = self.config.gpio_pin
             
-            self.switch_method = SwitchMethod.Direction
-            self.direction = self.__get_gpio_direction(self.config.default_power_status)
-        
-        self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
-        GPIO.setup(self.relay_pin, self.gpio_direction, initial=self.gpio_status)
+            if (self.config.use_direction_control):
 
-        print(f'Initialized >> {self}')
+                if (not self.config.is_low_voltage_trigger):
+                    raise Exception('Direction control is only supported for low voltage trigger relays.')
+                
+                self.switch_method = SwitchMethod.Direction
+                self.direction = self.__get_gpio_direction(self.config.default_power_status)
+            
+            self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
+            GPIO.setup(self.relay_pin, self.gpio_direction, initial=self.gpio_status)
+
+            print(f'Initialized >> {self}')
+
+            return True
+
+        except Exception as ex:
+            print(f"Oops! {ex.__class__} Unable to intialize [{self.driver_name}]. Details: {ex}")
+
+        return False
+
 
     def cleanup(self):
         GPIO.cleanup()
