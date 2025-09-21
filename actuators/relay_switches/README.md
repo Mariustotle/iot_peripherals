@@ -65,26 +65,23 @@ These modules are usually active LOW i.e., That means:
 ## Troubleshooting
 
 ### General
-- Start simple, connect the Relay directly to the Raspberry PI and run the most simple version of the code. I.E. remove all non-essential components until you have a successfull test.
+- [X] Bypasses all unnecesary cables and devices, smallest working unit first.
+- [X] If you connect the GPIO IN to GROUND the Green Light comes on.
+- [X] You can switch the Relay on manually through bash commands
+  ```bash
+  # Set pin LOW
+  gpioset gpiochip0 12=0
+  raspi-gpio get 12
+
+  # Set pin HIGH
+  gpioset gpiochip0 12=1
+  raspi-gpio get 12
+
+  gpioinfo
+  ```
 
 
 ### The RED light stays on and do not change
-After doing the basic testing above, check if you have a 5V Relay Module. Short your IN to Ground (Give it 5V) if the green light comes up then you have a 5V Relay Module so will need to add some hardware.
 
-You have a couple of options
-- Add a NPN (Negative-Positive-Negative) transister + resistor and use the 5V power
-  Example resister: 2N2222
-- Relay Power
-  - VCC → Pi 5 V pin
-  - GND → Pi GND pin (must be common with emitter!)
-- Transistor (Flat face to you: [E]-[C]-[B])
-  - Emitter (E) → Pi GND
-  - Collector (C) → Relay IN pin
-  - Base (B) → Pi GPIO (e.g. BCM18) via 1 kΩ resistor
-- Pull-up Resistor
-  - Add a 10 kΩ resistor from relay IN → relay VCC (5 V).
-  - Ensures IN is HIGH (relay OFF) whenever transistor isn’t pulling low.
-  
-- ULN2003/ULN2803 driver board (Simular to NPN but for up to 8 channels)
 
 
