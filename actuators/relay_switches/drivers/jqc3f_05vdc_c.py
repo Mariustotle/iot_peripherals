@@ -12,8 +12,8 @@ from peripherals.contracts.switch_method import SwitchMethod
 class JQC3F_05VDC_C(RelayDriverBase):
     board_type:str = None
     gpio_level:GPIOStatus = None
-    switch_method:SwitchMethod = SwitchMethod.Level
-    direction:InputOutput = InputOutput.Output
+    switch_method:SwitchMethod = SwitchMethod.Undefined
+    direction:InputOutput = InputOutput.Undefined
 
     @property
     def gpio_status(self) -> Literal[0]:
@@ -59,20 +59,17 @@ class JQC3F_05VDC_C(RelayDriverBase):
 
             GPIO.setmode(GPIO.BCM)   # BCM pin numbering
             self.board_type = 'BCM'
-            self.relay_pin = self.config.gpio_pin
-            
-            if (self.config.use_direction_control):
+            self.relay_pin = self.config.gpio_pin            
 
-                if (self.config.is_low_voltage_trigger == False):
-                    raise Exception('Direction control is only supported for low voltage trigger relays.')
-                
-                self.switch_method = SwitchMethod.Direction
-                self.direction = self.__get_gpio_direction(self.config.default_power_status)
+            if (self.config.use_direction_control and not self.config.is_low_voltage_trigger):
+                raise Exception('Direction control is only supported for low voltage trigger relays.')
+            
+            self.switch_method = SwitchMethod.Level if not self.config.use_direction_control else SwitchMethod.Direction
+            self.direction = InputOutput.Output if not self.config.use_direction_control else self.__get_gpio_direction(self.config.default_power_status)
             
             self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
+            print(f'Initializing {self.name} on GPIO Pin {self.relay_pin} using [{self.switch_method}] method with [{self.gpio_level}] level and [{self.direction}] direction.')
             GPIO.setup(self.relay_pin, self.gpio_direction, initial=self.gpio_status)
-
-            print(f'Initialized >> {self}')
 
             return True
 

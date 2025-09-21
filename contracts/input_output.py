@@ -1,6 +1,7 @@
 from enum import Enum
 
 class InputOutput(str, Enum):
+    Undefined = "Undefined"
     Input = "Input"
     Output = "Output"
 

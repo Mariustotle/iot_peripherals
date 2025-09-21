@@ -1,6 +1,7 @@
 from enum import Enum
 
 class SwitchMethod(str, Enum):
+    Undefined = "Undefined"
     Level = "Level"
     Direction = "Direction"
 
