@@ -4,6 +4,9 @@ A relay module is an electrically operated switch that allows a low-power device
 
 ## Overview
 
+### Requirement
+For Raspberry Pi you need a 3.3V Relay Module, the ones typically available is 5V. You can use the 5V but then you will need to include some hardware to bridge the gap, note the relay is powered by a 5V but this is talking about the GPIO power which on a Raspberry Pi is 3.3V (Higher voltage here will hurt the Pi). See the troublehooting section for more details.
+
 ### Input side (low-voltage control)
 
 - VCC → 5V power supply
@@ -50,3 +53,22 @@ These modules are usually active LOW i.e., That means:
     }
 }
 ```
+
+## Troubleshooting
+
+### General
+- Start simple, connect the Relay directly to the Raspberry PI and run the most simple version of the code. I.E. remove all non-essential components until you have a successfull test.
+
+
+### The RED light stays on and do not change
+After doing the basic testing above, check if you have a 5V Relay Module. Short your IN to Ground (Give it 5V) if the green light comes up then you have a 5V Relay Module so will need to add some hardware.
+
+You have a couple of options
+- Add a NPN (Negative-Positive-Negative) resister and use the 5V power
+  Example resister: 2N2222
+  - Pi GPIO → 1 kΩ → NPN base
+  - NPN emitter → GND
+  - NPN collector → relay IN
+  - 10 kΩ pull-up from relay IN → relay VCC (5 V)
+  
+- ULN2003/ULN2803 driver board (Simular to NPN but for up to 8 channels)
