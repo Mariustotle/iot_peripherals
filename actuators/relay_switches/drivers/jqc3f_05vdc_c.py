@@ -17,11 +17,11 @@ class JQC3F_05VDC_C(RelayDriverBase):
 
     def _switch_on(self):
         print('[JQC3F_05VDC_C] switching relay ON')
-        GPIO.output(self.relay_pin, GPIO.LOW)
+        GPIO.output(self.relay_pin, GPIO.HIGH)
 
     def _switch_off(self):        
         print('[JQC3F_05VDC_C] switching relay OFF')
-        GPIO.output(self.relay_pin, GPIO.HIGH)
+        GPIO.output(self.relay_pin, GPIO.LOW)
 
     def cleanup(self):
         GPIO.cleanup()

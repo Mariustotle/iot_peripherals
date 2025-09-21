@@ -5,7 +5,7 @@ A relay module is an electrically operated switch that allows a low-power device
 ## Overview
 
 ### Requirement
-For Raspberry Pi you need a 3.3V Relay Module, the ones typically available is 5V. You can use the 5V but then you will need to include some hardware to bridge the gap, note the relay is powered by a 5V but this is talking about the GPIO power which on a Raspberry Pi is 3.3V (Higher voltage here will hurt the Pi). See the troublehooting section for more details.
+For Raspberry Pi you need a Relay Module that is "Low Level Trigger", this will allow the 3.3V GPIO data pin to set ON/OFF. You can use the 5V but then you will need to include some hardware to bridge the gap, note the relay is powered by a 5V but this is talking about the GPIO power which on a Raspberry Pi is 3.3V (Higher voltage here will hurt the Pi). See the troublehooting section for more details.
 
 ### Input side (low-voltage control)
 
@@ -64,11 +64,19 @@ These modules are usually active LOW i.e., That means:
 After doing the basic testing above, check if you have a 5V Relay Module. Short your IN to Ground (Give it 5V) if the green light comes up then you have a 5V Relay Module so will need to add some hardware.
 
 You have a couple of options
-- Add a NPN (Negative-Positive-Negative) resister and use the 5V power
+- Add a NPN (Negative-Positive-Negative) transister + resistor and use the 5V power
   Example resister: 2N2222
-  - Pi GPIO → 1 kΩ → NPN base
-  - NPN emitter → GND
-  - NPN collector → relay IN
-  - 10 kΩ pull-up from relay IN → relay VCC (5 V)
+- Relay Power
+  - VCC → Pi 5 V pin
+  - GND → Pi GND pin (must be common with emitter!)
+- Transistor (Flat face to you: [E]-[C]-[B])
+  - Emitter (E) → Pi GND
+  - Collector (C) → Relay IN pin
+  - Base (B) → Pi GPIO (e.g. BCM18) via 1 kΩ resistor
+- Pull-up Resistor
+  - Add a 10 kΩ resistor from relay IN → relay VCC (5 V).
+  - Ensures IN is HIGH (relay OFF) whenever transistor isn’t pulling low.
   
 - ULN2003/ULN2803 driver board (Simular to NPN but for up to 8 channels)
+
+
