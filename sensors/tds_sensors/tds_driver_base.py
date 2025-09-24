@@ -6,6 +6,7 @@ from peripherals.sensors.sensor_reading import SensorReading
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.tds_config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
+from peripherals.sensors.read_decorator import read
 
 
 class TDSDriverBase(Sensor):
@@ -27,25 +28,35 @@ class TDSDriverBase(Sensor):
     # Can be overrided in driver specific implimentation for special rules
     def validate(self, config:TDSConfig) -> bool:  return True
 
-    @abstractmethod
-    async def read_once(self) -> float: pass
-
-    async def read(self) -> SensorReading[float]:
+    @read(label="Average TDS", description="Read average across multiple TSD readings")
+    async def read_multiple(self, number_of_reads:int) -> SensorReading[float]:
         total = 0.0
 
-        for take in range (0, self.config.number_of_readings):
+        for take in range (0, number_of_reads):
             total += await self.read_once()
 
-            if (take < self.config.number_of_readings and self.config.delay_between_readings > 0):
+            if (take < number_of_reads and self.config.delay_between_readings > 0):
                 await asyncio.sleep(self.config.delay_between_readings)
 
-        average = total / self.config.number_of_readings
+        average = total / number_of_reads
 
         return SensorReading.create(average, self)
 
+    @abstractmethod
+    async def read_once(self) -> float: pass
+
+    @read(label="TDS", description="Read a the default TDS value")
+    async def default_read(self) -> SensorReading[float]:
+
+        if (self.config.number_of_readings is None or self.config.number_of_readings < 1):
+            reading = await self.read_once()
+            return SensorReading.create(reading, self)
+        
+        return await self.read_multiple(self.config.number_of_readings)
+
 
     def get_description(self) -> str: 
-        return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.sensor_type.name}], Driver: [{self.driver_name}] with configuration of XXXXXXXX."
+        return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.sensor_type.name}], Driver: [{self.driver_name}] over average of [{self.config.number_of_readings}] readings."
 
 
 
