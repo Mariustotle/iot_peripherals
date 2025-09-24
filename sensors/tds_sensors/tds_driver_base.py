@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import asyncio
+import time
 
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_reading import SensorReading
@@ -29,30 +30,30 @@ class TDSDriverBase(Sensor):
     def validate(self, config:TDSConfig) -> bool:  return True
 
     @read(label="Average TDS", description="Read average across multiple TSD readings")
-    async def read_multiple(self, number_of_reads:int) -> SensorReading[float]:
+    def read_multiple(self, number_of_reads:int) -> SensorReading[float]:
         total = 0.0
 
         for take in range (0, number_of_reads):
-            total += await self.read_once()
+            total += self.read_once()
 
             if (take < number_of_reads and self.config.delay_between_readings > 0):
-                await asyncio.sleep(self.config.delay_between_readings)
+                time.sleep(self.config.delay_between_readings)
 
         average = total / number_of_reads
 
         return SensorReading.create(average, self)
 
     @abstractmethod
-    async def read_once(self) -> float: pass
+    def read_once(self) -> float: pass
 
     @read(label="TDS", description="Read a the default TDS value")
-    async def default_read(self) -> SensorReading[float]:
+    def default_read(self) -> SensorReading[float]:
 
         if (self.config.number_of_readings is None or self.config.number_of_readings < 1):
-            reading = await self.read_once()
+            reading = self.read_once()
             return SensorReading.create(reading, self)
         
-        return await self.read_multiple(self.config.number_of_readings)
+        return self.read_multiple(self.config.number_of_readings)
 
 
     def get_description(self) -> str: 

@@ -24,6 +24,7 @@ class Sensor(Peripheral):
         self.driver_name = driver_name
         self.unit_type = unit_type
         self._reads: list[ReadAction] = []
+        self._autowire_actions()  # <-- reflect & register
 
     @property
     def reading_options(self) -> list[ReadAction]:
@@ -57,7 +58,7 @@ class Sensor(Peripheral):
             ))
 
     @abstractmethod
-    async def default_read(self) -> SensorReading[T]: pass
+    def default_read(self) -> SensorReading[T]: pass
 
     def get_description(self) -> str:
         return f'{self.name}. Sensor: [{self.sensor_type.name}], Driver: [{self.driver_name}]'
