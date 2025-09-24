@@ -1,5 +1,5 @@
 from abc import abstractmethod
-import asyncio
+
 import time
 
 from peripherals.sensors.sensor import Sensor
@@ -8,6 +8,7 @@ from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.tds_config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 from peripherals.sensors.read_decorator import read
+from datetime import datetime
 
 
 class TDSDriverBase(Sensor):
@@ -29,8 +30,7 @@ class TDSDriverBase(Sensor):
     # Can be overrided in driver specific implimentation for special rules
     def validate(self, config:TDSConfig) -> bool:  return True
 
-    @read(label="Average TDS", description="Read average across multiple TSD readings")
-    def read_multiple(self, number_of_reads:int) -> SensorReading[float]:
+    def read_multiple(self, number_of_reads:int) -> float:
         total = 0.0
 
         for take in range (0, number_of_reads):
@@ -45,15 +45,18 @@ class TDSDriverBase(Sensor):
 
     @abstractmethod
     def read_once(self) -> float: pass
-
-    @read(label="TDS", description="Read a the default TDS value")
-    def default_read(self) -> SensorReading[float]:
-
+    
+    def _default_reading(self) -> SensorReading[float]:
+        
         if (self.config.number_of_readings is None or self.config.number_of_readings < 1):
             reading = self.read_once()
             return SensorReading.create(reading, self)
         
-        return self.read_multiple(self.config.number_of_readings)
+        reading = self.read_multiple(self.config.number_of_readings)
+        response = SensorReading.create(reading, self)
+
+        self.read_time = response.read_time        
+        return response
 
 
     def get_description(self) -> str: 

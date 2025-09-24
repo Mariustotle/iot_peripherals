@@ -1,12 +1,14 @@
 
 from abc import abstractmethod
+from peripherals.sensors.read_decorator import read
 from peripherals.sensors.read_decorator  import ReadAction, derive_params_from_signature
 from peripherals.peripheral import Peripheral
 from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor_reading import SensorReading
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.unit_type import UnitType
-from typing import TypeVar
+from typing import Optional, TypeVar
+from datetime import datetime
 
 import inspect
 
@@ -16,6 +18,7 @@ class Sensor(Peripheral):
     sensor_type: SensorType = None
     unit_type: UnitType = None
     driver_name:str = None
+    last_read_time: Optional[datetime] = None
     
     def __init__(self, sensor_type:SensorType, name:str, driver_name:str, unit_type:UnitType = UnitType.Unkown):        
         super().__init__(PeripheralType.Sensor, name)
@@ -58,7 +61,13 @@ class Sensor(Peripheral):
             ))
 
     @abstractmethod
-    def default_read(self) -> SensorReading[T]: pass
+    def _default_reading(self) -> SensorReading[T]: pass
+
+    @read(label="TDS", description="Read the default TDS value")
+    def read(self) -> SensorReading[T]:
+        reading = self._default_reading()
+        self.last_read_time = reading.read_time
+        return reading
 
     def get_description(self) -> str:
         return f'{self.name}. Sensor: [{self.sensor_type.name}], Driver: [{self.driver_name}]'
