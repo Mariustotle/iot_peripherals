@@ -18,6 +18,7 @@ class Sensor(Peripheral):
     sensor_type: SensorType = None
     unit_type: UnitType = None
     driver_name:str = None
+    last_value: Optional[SensorReading[T]] = None
     last_read_time: Optional[datetime] = None
     
     def __init__(self, sensor_type:SensorType, name:str, driver_name:str, unit_type:UnitType = UnitType.Unkown):        
@@ -61,16 +62,27 @@ class Sensor(Peripheral):
             ))
 
     @abstractmethod
-    def _default_reading(self) -> SensorReading[T]: pass
+    def _default_reading(self) -> T: pass
 
-    @read(label="TDS", description="Read the default TDS value")
-    def read(self) -> SensorReading[T]:
+    @read(label="Default", description="The default sensor reading")
+    def read(self) -> Optional[SensorReading[T]]:
         reading = self._default_reading()
-        self.last_read_time = reading.read_time
-        return reading
+
+        response: Optional[SensorReading[T]] = None
+
+        if (reading):          
+            response = SensorReading.create(reading, self)
+            self.last_read_time = response.read_time
+            self.last_value = reading
+
+        return response
 
     def get_description(self) -> str:
         return f'{self.name}. Sensor: [{self.sensor_type.name}], Driver: [{self.driver_name}]'
 
     def __str__(self):
-        return f'{self.name}. Sensor: [{self.sensor_type.name}], Driver: [{self.driver_name}]. Override "__str__(self)" in derived class to include current status.'
+        read_value = 'N/A'
+        if (self.last_value is not None): 
+            read_value = f'{self.last_value}'
+
+        return f'{self.name}. Sensor: [{self.sensor_type.name}], Driver: [{self.driver_name}], Latest Value: [{read_value}]. **Can customize this by overriding "__str__".'

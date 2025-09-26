@@ -3,15 +3,11 @@ from abc import abstractmethod
 import time
 
 from peripherals.sensors.sensor import Sensor
-from peripherals.sensors.sensor_reading import SensorReading
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
-from peripherals.sensors.read_decorator import read
-from datetime import datetime
 
 from peripherals.sensors.unit_type import UnitType
-
 
 class TDSDriverBase(Sensor):
     config:TDSConfig = None
@@ -48,17 +44,13 @@ class TDSDriverBase(Sensor):
     @abstractmethod
     def read_once(self) -> float: pass
     
-    def _default_reading(self) -> SensorReading[float]:
-        
+    def _default_reading(self) -> float:        
         if (self.config.number_of_readings is None or self.config.number_of_readings < 1):
             reading = self.read_once()
-            return SensorReading.create(reading, self)
+            return reading
         
-        average = self.read_multiple(self.config.number_of_readings)
-        response = SensorReading.create(average, self)
-
-        self.read_time = response.read_time        
-        return response
+        average = self.read_multiple(self.config.number_of_readings)    
+        return average
 
 
     def get_description(self) -> str: 

@@ -34,6 +34,6 @@ class SensorReading(Generic[T]):
         if (read_time is None):
             read_time = datetime.utcnow()
 
-        sensor.read_time = read_time
+        sensor.last_read_time = read_time
 
         return SensorReading(value=value, sensor_type=sensor.sensor_type, driver_name=sensor.driver_name, device_name= sensor.name, unit_type=sensor.unit_type, read_time=read_time)
