@@ -22,15 +22,17 @@ Pin functions (HW-503):
 ```json
 
     "Sensors" : {
-            "DigitalTemperatureSensors" :
-            [
-                {
-                    "name": "Server Room Temp",
-                    "driver": null,
-                    "gpio_pin": 4,
-                    "measurement": "Celsius"
-                }
-            ],
+        "TemperatureSwitches" :
+        [
+            {
+                "name": "Server Room Temperature",
+                "adc_module": "module a",
+                "driver": null,
+                "gpio_out_pin": 4,
+                "switch_threshold": 12.3,
+                "measurement": "Celsius"
+            }
+        ],
     }
 
 ```
