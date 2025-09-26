@@ -3,9 +3,9 @@
 import importlib
 
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
-from peripherals.sensors.tds_sensors.tds_config import TDSConfig
-from peripherals.sensors.tds_sensors.tds_driver_base import TDSDriverBase
-from peripherals.sensors.tds_sensors.tds_simulator import TDSSimulator
+from peripherals.sensors.tds_sensors.config import TDSConfig
+from peripherals.sensors.tds_sensors.driver_base import TDSDriverBase
+from peripherals.sensors.tds_sensors.simulator import TDSSimulator
 
 
 class TDSFactory:

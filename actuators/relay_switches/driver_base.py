@@ -3,7 +3,7 @@ from abc import abstractmethod
 from peripherals.actuators.action_decorator import action
 from peripherals.actuators.actuator import Actuator
 from peripherals.actuators.actuator_types import ActuatorType
-from peripherals.actuators.relay_switches.relay_config import RelayConfig
+from peripherals.actuators.relay_switches.config import RelayConfig
 from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
 from peripherals.contracts.on_off_status import OnOffStatus
 

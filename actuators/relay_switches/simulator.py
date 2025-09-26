@@ -1,5 +1,5 @@
 
-from peripherals.actuators.relay_switches.relay_driver_base import RelayDriverBase
+from peripherals.actuators.relay_switches.driver_base import RelayDriverBase
 from peripherals.contracts.on_off_status import OnOffStatus
 
 class RelaySimulator(RelayDriverBase):

@@ -5,10 +5,12 @@ import time
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_reading import SensorReading
 from peripherals.sensors.sensor_type import SensorType
-from peripherals.sensors.tds_sensors.tds_config import TDSConfig
+from peripherals.sensors.tds_sensors.config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 from peripherals.sensors.read_decorator import read
 from datetime import datetime
+
+from peripherals.sensors.unit_type import UnitType
 
 
 class TDSDriverBase(Sensor):
@@ -19,7 +21,7 @@ class TDSDriverBase(Sensor):
         driver = config.driver if config.driver is not None else TDSDrivers.Default
         driver_name = driver.value if not simulated else 'N/A - Simulated'
 
-        super().__init__(SensorType.TDS, config.name, driver_name)
+        super().__init__(SensorType.TDS, config.name, driver_name, unit_type=UnitType.TDS)
         
         self.config = config
         self.simulated = simulated 
@@ -41,7 +43,7 @@ class TDSDriverBase(Sensor):
 
         average = total / number_of_reads
 
-        return SensorReading.create(average, self)
+        return average
 
     @abstractmethod
     def read_once(self) -> float: pass
@@ -52,8 +54,8 @@ class TDSDriverBase(Sensor):
             reading = self.read_once()
             return SensorReading.create(reading, self)
         
-        reading = self.read_multiple(self.config.number_of_readings)
-        response = SensorReading.create(reading, self)
+        average = self.read_multiple(self.config.number_of_readings)
+        response = SensorReading.create(average, self)
 
         self.read_time = response.read_time        
         return response

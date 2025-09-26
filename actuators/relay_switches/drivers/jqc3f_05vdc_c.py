@@ -2,8 +2,8 @@
 from typing import Literal
 import RPi.GPIO as GPIO
 
-from peripherals.actuators.relay_switches.relay_config import RelayConfig
-from peripherals.actuators.relay_switches.relay_driver_base import RelayDriverBase
+from peripherals.actuators.relay_switches.config import RelayConfig
+from peripherals.actuators.relay_switches.driver_base import RelayDriverBase
 from peripherals.contracts.gpio_status import GPIOStatus
 from peripherals.contracts.input_output import InputOutput
 from peripherals.contracts.on_off_status import OnOffStatus

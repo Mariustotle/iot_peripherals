@@ -1,4 +1,4 @@
-from peripherals.sensors.tds_sensors.tds_driver_base import TDSDriverBase
+from peripherals.sensors.tds_sensors.driver_base import TDSDriverBase
 
 import random
 

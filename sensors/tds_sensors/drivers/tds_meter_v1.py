@@ -1,6 +1,6 @@
 
 import random
-from peripherals.sensors.tds_sensors.tds_driver_base import TDSDriverBase
+from peripherals.sensors.tds_sensors.driver_base import TDSDriverBase
 
 
 class TDS_METER_V1(TDSDriverBase):

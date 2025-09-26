@@ -2,5 +2,5 @@ from enum import Enum
 
 class UnitType(str, Enum):
     Unkown = "Unkown"
-    TDS = "TDS"
+    TDS = "ppm"
     

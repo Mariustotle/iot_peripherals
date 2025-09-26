@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, TypeVar, Generic
+from typing import Any, Optional, TypeVar, Generic
 from dataclasses import dataclass
 
 from peripherals.sensors.sensor_type import SensorType
@@ -17,20 +17,23 @@ class SensorReading(Generic[T]):
     read_time: datetime = None
     unit_type: UnitType = None
 
-    @property
-    def description(self) -> str:
-        return self.__str__()
-
-    def __str__(self):
+    def __str__(self) -> str:
+       
         unit_measure = ''
         if (self.unit_type != None and self.unit_type != UnitType.Unkown):
             unit_measure = f' {self.unit_type.value}'
 
-        reading = f'{self.device_name}: >>> {self.value}{unit_measure} <<< '
-        details = f'(Sensor: {self.sensor_type.name}, Driver: {self.driver_name}) read @{self.read_time}'         
+        converted_value = str(self.value)
 
-        return f'{reading}{details}'
+        return f'>>> {converted_value}{unit_measure} <<< @ {self.read_time}'        
+
     
     @staticmethod
-    def create(value: T, sensor: Any, date_time:datetime = datetime.utcnow()) -> 'SensorReading[T]':
-        return SensorReading(value=value, sensor_type=sensor.sensor_type, driver_name=sensor.driver_name, device_name= sensor.name, unit_type=sensor.unit_type, read_time=date_time)
+    def create(value: T, sensor: Any, read_time:Optional[datetime] = None) -> 'SensorReading[T]':
+
+        if (read_time is None):
+            read_time = datetime.utcnow()
+
+        sensor.read_time = read_time
+
+        return SensorReading(value=value, sensor_type=sensor.sensor_type, driver_name=sensor.driver_name, device_name= sensor.name, unit_type=sensor.unit_type, read_time=read_time)
