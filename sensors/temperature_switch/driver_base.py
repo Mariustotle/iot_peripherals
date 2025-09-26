@@ -1,19 +1,19 @@
 from abc import abstractmethod
 
 
-from peripherals.sensors.digital_temp_sensors.config import DigitalTempConfig
-from peripherals.sensors.digital_temp_sensors.temperature_drivers import DigitalTempDrivers
+from peripherals.sensors.temperature_switch.config import TempSwitchConfig
+from peripherals.sensors.temperature_switch.temp_switch_drivers import TempSwitchDrivers
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.unit_type import UnitType
 
-class DigitalTempDriverBase(Sensor):    
-    config:DigitalTempConfig = None
+class TempSwitchDriverBase(Sensor):    
+    config:TempSwitchConfig = None
     simulated:bool = None
-    relay_pin:int = None
+    gpio_out_pin:int = None
     
-    def __init__(self, config:DigitalTempConfig, simulated:bool = False):
-        driver = config.driver if config.driver is not None else DigitalTempDrivers.Default
+    def __init__(self, config:TempSwitchConfig, simulated:bool = False):
+        driver = config.driver if config.driver is not None else TempSwitchDrivers.Default
         driver_name = driver.value if not simulated else 'N/A - Simulated'
 
         unit_type = UnitType.Celsius if config.measurement == 'Celsius' else UnitType.Fahrenheit
@@ -22,11 +22,11 @@ class DigitalTempDriverBase(Sensor):
         
         self.config = config
         self.simulated = simulated 
-        self.relay_pin = config.gpio_pin
+        self.gpio_out_pin = config.gpio_out_pin
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate Digital Temperature Driver [{self.driver_name}] as the config validation failed.')        
 
     # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:DigitalTempConfig) -> bool:  return True
+    def validate(self, config:TempSwitchConfig) -> bool:  return True
 

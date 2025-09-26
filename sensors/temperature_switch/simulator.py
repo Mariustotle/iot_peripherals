@@ -1,16 +1,14 @@
-
-
+from peripherals.contracts.temperature_measurement import TemperatureMeasurement
+from peripherals.sensors.temperature_switch.driver_base import TempSwitchDriverBase
 
 import random
-from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
 
-class DS18B20(DigitalTempDriverBase):
+class TempSwitchSimulator(TempSwitchDriverBase):
 
     def _default_reading(self) -> float:
 
         # Assume typical room temperature range
-        if self.config.measurement == TemperatureMeasurement.Celcious:
+        if self.config.measurement == TemperatureMeasurement.Celsius:
             # Room temperature between 18°C and 26°C
             return round(random.uniform(18.0, 26.0), 2)
         
