@@ -2,7 +2,6 @@
 
 ![Digital Temperature Sensor](https://raw.githubusercontent.com/Mariustotle/universal_iot_hub/refs/heads/main/resources/sensors/digital_temperature_sensor/DHT22.png)
 
-
 ## Overview
 
 

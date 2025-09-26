@@ -2,6 +2,7 @@
 
 ![Temperature Switch](https://raw.githubusercontent.com/Mariustotle/universal_iot_hub/refs/heads/main/resources/sensors/temperature_switch/HW-503_LM393.png)
 
+
 # Overview
 
 
