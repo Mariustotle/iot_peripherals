@@ -1,7 +1,3 @@
-
-
-
-import random
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
 import Adafruit_DHT
@@ -13,7 +9,7 @@ class DHT22(DigitalTempDriverBase):
     def initialize(self) -> bool:
 
         try:
-            self.sensor = Adafruit_DHT.DHT22
+            self.sensor = Adafruit_DHT.DHT11
             return True
 
         except Exception as ex:
@@ -22,8 +18,15 @@ class DHT22(DigitalTempDriverBase):
         return False
 
 
-    def _default_reading(self) -> float:        
+    def _default_reading(self) -> float:
         (humidity, temperature) = Adafruit_DHT.read_retry(self.sensor, self.gpio_pin)
 
-        return DigitalTempResponse.create(temperature=temperature, measurement=self.config.measurement, humidity=humidity)
+        if temperature is not None:
+            if self.config.measurement == TemperatureMeasurement.Fahrenheit:
+                temperature = (temperature * 9/5) + 32
 
+        return DigitalTempResponse.create(
+            temperature=temperature,
+            measurement=self.config.measurement,
+            humidity=humidity
+        )
