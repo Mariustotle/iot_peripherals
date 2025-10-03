@@ -10,7 +10,7 @@ class LM393(TempSwitchDriverBase):
     def _default_reading(self) -> float:
 
         # Assume typical room temperature range
-        if self.config.measurement == TemperatureMeasurement.Celcious:
+        if self.config.measurement == TemperatureMeasurement.Celsius:
             # Room temperature between 18°C and 26°C
             return round(random.uniform(18.0, 26.0), 2)
         

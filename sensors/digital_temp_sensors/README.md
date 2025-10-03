@@ -22,12 +22,12 @@ Pin functions (DHT11):
 ```json
 
     "Sensors" : {
-        "TemperatureSwitches" :
+        "DigitalTemperatureSensors" :
         [
             {
                 "name": "Server Room Temperature",
                 "driver": null,
-                "gpio_pin": 4,
+                "gpio_pin": 12,
                 "measurement": "Celsius"
             }
         ],
