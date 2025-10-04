@@ -1,18 +1,22 @@
 
 
+from typing import Optional
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.unit_type import UnitType
 from dataclasses import dataclass
 
 @dataclass
 class DigitalTempResponse():
-    humidity:float = None
     temperature:float = None
     measurement:TemperatureMeasurement = None
+    humidity:Optional[float] = None    
 
     @staticmethod
-    def create(temperature:float, measurement:TemperatureMeasurement, humidity:float):
+    def create(temperature:float, measurement:TemperatureMeasurement, humidity:Optional[float] = None):
         return DigitalTempResponse(temperature=temperature, measurement=measurement, humidity=humidity)
 
     def __str__(self):
-        return f'Temperature: {self.temperature} {UnitType.Celsius if self.measurement == TemperatureMeasurement.Celsius else UnitType.Fahrenheit}, Humidity: {self.humidity}'
+
+        humidity_info = f', Humidity: [{str(self.humidity)}]' if self.humidity is not None else ''
+
+        return f'Temperature: {self.temperature} {UnitType.Celsius if self.measurement == TemperatureMeasurement.Celsius else UnitType.Fahrenheit}{humidity_info}'
