@@ -3,7 +3,7 @@ from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriv
 import Adafruit_DHT
 from peripherals.sensors.digital_temp_sensors.response import DigitalTempResponse
 
-class DHT22(DigitalTempDriverBase):
+class DHT11(DigitalTempDriverBase):
     sensor = None
 
     def initialize(self) -> bool:
