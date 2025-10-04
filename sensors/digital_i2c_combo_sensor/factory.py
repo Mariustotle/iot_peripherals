@@ -9,7 +9,7 @@ class DigitalComboFactory:
 
     @staticmethod
     def create(config:DigitalComboConfig, simulate:bool = False) -> 'DigitalComboDriverBase':
-        return SensorFactory.create(config, 'digital_temp_sensors', DigitalComboSimulator, DigitalComboDrivers, simulate)
+        return SensorFactory.create(config, 'digital_i2c_combo_sensor', DigitalComboSimulator, DigitalComboDrivers, simulate)
 
 
 
