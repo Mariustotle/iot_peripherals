@@ -19,14 +19,14 @@ class DHT11(DigitalTempDriverBase):
 
         return False
     
-    def _collect_input(self):
+    def _collect_input(self, pin):
         count = []
         last = -1
         current_len = 0
 
         # Record change in pin state
         for i in range(10000):  # safety stop
-            current = GPIO.input(self.pin)
+            current = GPIO.input(pin)
             if current != last:
                 count.append(current_len)
                 current_len = 1
@@ -63,7 +63,7 @@ class DHT11(DigitalTempDriverBase):
         GPIO.setup(pin, GPIO.IN)
 
         # Wait for response
-        count = self._collect_input()
+        count = self._collect_input(pin)
 
         # Parse bits from timing
         bits = self._parse_data(count)
