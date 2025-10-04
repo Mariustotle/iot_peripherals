@@ -37,8 +37,7 @@ class DHT11(DigitalTempDriverBase):
         return count
 
     def _parse_data(self, count):
-        # Skip initial response
-        data = count[4:]
+        data = count[4:]  # skip initial transitions
         bits = []
 
         for i in range(0, len(data), 2):
@@ -46,12 +45,16 @@ class DHT11(DigitalTempDriverBase):
                 break
             low = data[i]
             high = data[i + 1]
-            if high > low:
-                bits.append(1)
-            else:
-                bits.append(0)
+            bit = 1 if high > low else 0
+            bits.append(bit)
 
+        if len(bits) < 40:
+            print(f"[DEBUG] Incomplete bitstream ({len(bits)} bits):", bits)
+            return None
+
+        print(f"[DEBUG] Raw bits: {bits[:40]}")
         return bits[:40]
+    
     
     def read_raw(self, pin):
         GPIO.setup(pin, GPIO.OUT)
