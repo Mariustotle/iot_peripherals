@@ -1,8 +1,8 @@
 import board
-import busio
+# import busio
 
 from adafruit_bme280 import basic as adafruit_bme280
-from peripherals.contracts.i2c_address import I2CAddress
+# from peripherals.contracts.i2c_address import I2CAddress
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_i2c_combo_sensor.driver_base import DigitalComboDriverBase
 from peripherals.sensors.digital_i2c_combo_sensor.response import DigitalComboResponse
