@@ -42,7 +42,7 @@ class BME280(DigitalComboDriverBase):
 
 
     def _default_reading(self) -> float:
-        (temperature, air_pressure, hygrometer) = self._read_raw(self.gpio_pin)
+        (temperature, air_pressure, hygrometer) = self._read_raw()
 
         if temperature is not None:
             if self.config.measurement == TemperatureMeasurement.Fahrenheit:
