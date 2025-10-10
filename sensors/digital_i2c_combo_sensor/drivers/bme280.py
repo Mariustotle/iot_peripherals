@@ -1,7 +1,7 @@
 import board
 import busio
-import adafruit_bme280.advanced as adafruit_bme280
 
+from adafruit_bme280 import Adafruit_BME280_I2C
 from peripherals.contracts.i2c_address import I2CAddress
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_i2c_combo_sensor.driver_base import DigitalComboDriverBase
@@ -18,7 +18,7 @@ class BME280(DigitalComboDriverBase):
             # Create sensor instance at default I2C address 0x76 (sometimes 0x77)
             address = 0x76 if self.config.i2c_address == I2CAddress.X76 else 0x77
 
-            self.sensor = adafruit_bme280.Adafruit_BME280_I2C(self.i2c, address=address)
+            self.sensor = Adafruit_BME280_I2C(self.i2c, address=address)
 
             # Optional: tweak settings
             self.sensor.sea_level_pressure = 1013.25  # for altitude compensation

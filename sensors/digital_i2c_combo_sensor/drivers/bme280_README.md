@@ -5,10 +5,7 @@
 ## Overview
 
 
-## Connection
-
-
-### Sensor Configuration
+## Hardware Configuration
 
 The Tenstar BME280 breakout has the following pins:
 
@@ -17,8 +14,21 @@ The Tenstar BME280 breakout has the following pins:
 - SCL → Raspberry Pi GPIO3 (pin 5) → I²C SCL
 - SDA → Raspberry Pi GPIO2 (pin 3) → I²C SDA
 
+
+## Software Configuration
+
+### Special Libraries
+```bash
+# Ensure you are in the local python instance (busio / board)
+python -m pip install adafruit-blinka
+```
+
+
 Make sure:
 I²C is enabled on your Raspberry Pi (In Bash)
+
+
+
 
 ```bash
 # Open the config
@@ -40,7 +50,7 @@ sudo i2cdetect -y 1
 You have installed smbus2 or adafruit-circuitpython-bme280 as the driver backend.
 
 
-## Configuration
+## Configuration File
 
 ```json
 
@@ -64,5 +74,6 @@ You have installed smbus2 or adafruit-circuitpython-bme280 as the driver backend
 Default I2C Address is 0x76 (Sometimes 0x77 if pulled high), if your sensor does not show up run the below to see the address:
 
 ```bash
+# Shows any connected I2C devices, dashes if nothing is detected
 sudo i2cdetect -y 1
 ```

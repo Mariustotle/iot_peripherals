@@ -25,7 +25,7 @@ Pin functions (XXXXXXX):
 - [-] - Ground
 
 
-## Configuration
+## Configuration File
 
 ```json
 
@@ -43,6 +43,9 @@ Pin functions (XXXXXXX):
 ```
 
 ## Software Configuration
+
+## Special Libraries or SDKs
+- List if any
 
 ### Testing from Bash
 
