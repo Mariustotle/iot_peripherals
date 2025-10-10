@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 
 from peripherals.sensors.digital_i2c_combo_sensor.config import DigitalComboConfig
-from peripherals.sensors.digital_temp_sensors.digital_temp_drivers import DigitalTempDrivers
+from peripherals.sensors.digital_i2c_combo_sensor.digital_combo_drivers import DigitalComboDrivers
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.unit_type import UnitType
@@ -13,7 +13,7 @@ class DigitalComboDriverBase(Sensor):
     gpio_pin:int = None
     
     def __init__(self, config:DigitalComboConfig, simulated:bool = False):
-        driver = config.driver if config.driver is not None else DigitalTempDrivers.Default
+        driver = config.driver if config.driver is not None else DigitalComboDrivers.Default
         driver_name = driver.value if not simulated else 'N/A - Simulated'
 
         # No Single Unit
