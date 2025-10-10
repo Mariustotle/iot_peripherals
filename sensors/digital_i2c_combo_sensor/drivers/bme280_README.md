@@ -24,29 +24,6 @@ python -m pip install adafruit-blinka
 python -m pip install adafruit-circuitpython-bme280
 ```
 
-### Run from the command line
-
-Make sure:
-I²C is enabled on your Raspberry Pi (In Bash)
-
-```bash
-# Open the config
-sudo raspi-config
-```
-
-1. Select "Interfacing Options"
-2. Select "I2C"
-3. Enable "Yes"
-
-```bash
-# Check if I2C is working (Must be running)
-sudo i2cdetect -y 1
-```
-
-
-(raspi-config → Interface Options → enable I²C).
-
-You have installed smbus2 or adafruit-circuitpython-bme280 as the driver backend.
 
 
 ## Configuration File
@@ -70,9 +47,4 @@ You have installed smbus2 or adafruit-circuitpython-bme280 as the driver backend
 
 ## Troubleshooting
 
-Default I2C Address is 0x76 (Sometimes 0x77 if pulled high), if your sensor does not show up run the below to see the address:
-
-```bash
-# Shows any connected I2C devices, dashes if nothing is detected
-sudo i2cdetect -y 1
-```
+- [I2C Troubleshooting](../../../troubleshooting.md)
