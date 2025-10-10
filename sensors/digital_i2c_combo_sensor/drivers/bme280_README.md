@@ -21,7 +21,7 @@ The Tenstar BME280 breakout has the following pins:
 ```bash
 # Ensure you are in the local python instance (busio / board)
 python -m pip install adafruit-blinka
-python -m pip install Adafruit-BME280
+python -m pip install adafruit-circuitpython-bme280
 ```
 
 ### Run from the command line
