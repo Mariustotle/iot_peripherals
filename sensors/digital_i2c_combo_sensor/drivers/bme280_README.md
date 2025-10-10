@@ -21,14 +21,13 @@ The Tenstar BME280 breakout has the following pins:
 ```bash
 # Ensure you are in the local python instance (busio / board)
 python -m pip install adafruit-blinka
+python -m pip install Adafruit-BME280
 ```
 
+### Run from the command line
 
 Make sure:
 I²C is enabled on your Raspberry Pi (In Bash)
-
-
-
 
 ```bash
 # Open the config
@@ -40,7 +39,7 @@ sudo raspi-config
 3. Enable "Yes"
 
 ```bash
-# Check if I2C is working
+# Check if I2C is working (Must be running)
 sudo i2cdetect -y 1
 ```
 
