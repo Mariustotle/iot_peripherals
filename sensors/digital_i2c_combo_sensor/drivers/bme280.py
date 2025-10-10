@@ -13,12 +13,12 @@ class BME280(DigitalComboDriverBase):
 
         try:
             # Set up I²C bus
-            self.i2c = busio.I2C(board.SCL, board.SDA)
+            self.i2c = board.I2C()  # uses board.SCL and board.SDA
 
             # Create sensor instance at default I2C address 0x76 (sometimes 0x77)
-            address = 0x76 if self.config.i2c_address == I2CAddress.X76 else 0x77
+            # address = 0x76 if self.config.i2c_address == I2CAddress.X76 else 0x77
 
-            self.sensor = adafruit_bme280.Adafruit_BME280_I2C(self.i2c, address=address)
+            self.sensor = adafruit_bme280.Adafruit_BME280_I2C(self.i2c)
 
             # Optional: tweak settings
             self.sensor.sea_level_pressure = 1013.25  # for altitude compensation
