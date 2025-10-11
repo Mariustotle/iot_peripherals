@@ -72,7 +72,7 @@ class JQC3F_05VDC_C(RelayDriverBase):
 
             GPIO.setmode(GPIO.BCM)   # BCM pin numbering
             self.board_type = 'BCM'
-            self.relay_pin = self.config.gpio_pin            
+            self.relay_pin = self.config.gpio_pin.pin
 
             if (self.config.use_direction_control and not self.config.is_low_voltage_trigger):
                 raise Exception('Direction control is only supported for low voltage trigger relays.')

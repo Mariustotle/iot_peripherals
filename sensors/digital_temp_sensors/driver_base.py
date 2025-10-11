@@ -20,7 +20,7 @@ class DigitalTempDriverBase(Sensor):
         
         self.config = config
         self.simulated = simulated 
-        self.gpio_pin = config.gpio_pin
+        self.gpio_pin = config.gpio_pin.pin
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate Digital Temperature Driver [{self.driver_name}] as the config validation failed.')        

@@ -22,7 +22,7 @@ class RelayDriverBase(Actuator):
         
         self.config = config
         self.simulated = simulated 
-        self.relay_pin = config.gpio_pin
+        self.relay_pin = config.gpio_pin.pin
 
         self.relay_status = OnOffStatus.Off
         self.power_status = OnOffStatus.Off if config.default_power_status == OnOffStatus.Off else OnOffStatus.On

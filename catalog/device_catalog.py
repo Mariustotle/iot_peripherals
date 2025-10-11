@@ -3,12 +3,15 @@ from typing import Any, List, Optional
 
 from peripherals.actuators.actuator import Actuator
 from peripherals.actuators.factory import ActuatorFactory
-from peripherals.communication.analog_digital_converter.adc_driver import ADCDriver
+from peripherals.communication.analog_digital_converter.adc_module import ADCModule
 from peripherals.communication.communication import Communication
 from peripherals.communication.factory import CommunicationFactory
 from peripherals.catalog.catalog_category import CatalogCategory
 from peripherals.communication.i2c_multiplexer.connection import MultiplexerConnection
-from peripherals.communication.i2c_multiplexer.i2c_multiplexer_driver import I2CMultiplexerDriver
+from peripherals.communication.i2c_multiplexer.i2c_multiplexer import I2CMultiplexer
+from peripherals.contracts.configuration_summary import ConfigurationSummary
+from peripherals.contracts.device_type import DeviceType
+from peripherals.contracts.pin_config import PinConfig
 from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.factory import SensorFactory
@@ -19,7 +22,9 @@ from src.contracts.modules.i2c_base import I2CBase
 class DeviceCatalog:
 
     _lock:RLock = None
-
+    
+    device_type:DeviceType = None
+    pin_configurations:List[PinConfig] = None
     sensors:CatalogCategory[Sensor] = None
     actuators:CatalogCategory[Actuator] = None
     communication_modules:CatalogCategory[Communication] = None
@@ -29,11 +34,23 @@ class DeviceCatalog:
         with self._lock:
             return self.sensors.all + self.actuators.all + self.communication_modules.all
         
+    def get_device_configuration_summary(self) -> 'ConfigurationSummary':
+        summary = ConfigurationSummary.create(
+            device_type=self.device_type, 
+            pin_configurations=self.pin_configurations,
+            sensors=self.sensors.all,
+            actuators=self.actuators.all,
+            i2c_multiplexers=[comm for comm in self.communication_modules.all if isinstance(comm, I2CMultiplexer)],
+            adc_modules=[comm for comm in self.communication_modules.all if isinstance(comm, ADCModule)]
+        )
+
+        return summary
+        
     def register_i2c_configuration(self, device_name:str, i2c_configuration:I2CBase):
         if i2c_configuration.multiplexer_details is None:
             return None        
     
-        mux:I2CMultiplexerDriver = self.communication_modules.get_by_name(i2c_configuration.multiplexer_details.name, I2CMultiplexerDriver)
+        mux:I2CMultiplexer = self.communication_modules.get_by_name(i2c_configuration.multiplexer_details.name, I2CMultiplexer)
         if mux is None:
             raise Exception(f"I2C Multiplexer '{i2c_configuration.multiplexer_details.name}' not found in catalog.")
         i2c_configuration.multiplexer_details.set_multiplexer(mux)
@@ -43,12 +60,25 @@ class DeviceCatalog:
 
     def register_adc_configuration(self, adc_configuration:AnalogBase) -> None:
         if adc_configuration.adc_details is not None:
-            adc = self.communication_modules.get_by_name(adc_configuration.adc_details.name, ADCDriver)
+            adc = self.communication_modules.get_by_name(adc_configuration.adc_details.name, ADCModule)
             if adc is None:
                 raise Exception(f"ADC Module '{adc_configuration.adc_details.name}' not found in catalog.")
             adc_configuration.adc_details.set_adc_module(adc)
 
-    def _register(self, peripheral_type:PeripheralType, configurations:List[Any], factory_type:Any, is_simulated:bool, scan_for_i2c:bool, scan_for_adc:bool) -> None:
+    def _register_pin(self, source:str, counter:int, pin_config:PinConfig) -> None:
+        if pin_config is None:
+            return
+
+        if pin_config.name is None or pin_config.name == '':
+            pin_config.name = f'{source}-{counter}'
+
+        existing = next((p for p in self.pin_configurations if p.pin == pin_config.pin and p.scheme == pin_config.scheme), None)
+        if existing:
+            raise Exception(f"Pin conflict detected for [{pin_config.name}]: Pin [{pin_config.pin}] with scheme [{pin_config.scheme}] is already registered as [{existing.name}].")
+
+        self.pin_configurations.append(pin_config)
+
+    def _register_peripheral(self, peripheral_type:PeripheralType, configurations:List[Any], factory_type:Any, is_simulated:bool, scan_for_i2c:bool, scan_for_adc:bool) -> None:
         factory = factory_type()
 
         for config in configurations:            
@@ -64,6 +94,10 @@ class DeviceCatalog:
                 if adc_configuration is not None:
                     self.register_adc_configuration(peripheral.key, adc_configuration)
 
+            pin_configurations = ObjectScanner.find_all(config, PinConfig)
+            for idx, pin_config in enumerate(pin_configurations):
+                self._register_pin(peripheral.key, idx + 1, pin_config)
+
             if peripheral_type == PeripheralType.Sensor:
                 self.sensors.register(peripheral)
             elif peripheral_type == PeripheralType.Actuator:
@@ -75,19 +109,22 @@ class DeviceCatalog:
 
 
     def __init__(self,
-            is_simulated:bool = False,           
+            is_simulated:bool = False,     
+            device_type:DeviceType = DeviceType.Unknown,      
             sensors_config:Optional[List[Any]] = None,
             actuators_config:Optional[List[Any]] = None,                 
             communications_config:Optional[List[Any]] = None   
         ):
     
         self._lock = RLock()
+        self.pin_configurations = []
+        self.device_type = device_type
         self.sensors = CatalogCategory[Sensor]()
         self.actuators = CatalogCategory[Actuator]()
         self.communication_modules = CatalogCategory[Communication]()
 
         if communications_config is not None:
-            self._register(
+            self._register_peripheral(
                 peripheral_type=PeripheralType.Communication,                 
                 configurations=communications_config, 
                 factory_type=CommunicationFactory, 
@@ -96,7 +133,7 @@ class DeviceCatalog:
                 scan_for_adc=False)
         
         if sensors_config is not None:
-            self._register(
+            self._register_peripheral(
                 peripheral_type=PeripheralType.Sensor,                 
                 configurations=sensors_config, 
                 factory_type=SensorFactory, 
@@ -105,7 +142,7 @@ class DeviceCatalog:
                 scan_for_adc=False)
 
         if actuators_config is not None:
-            self._register(
+            self._register_peripheral(
                 peripheral_type=PeripheralType.Actuator,                 
                 configurations=actuators_config, 
                 factory_type=ActuatorFactory, 
