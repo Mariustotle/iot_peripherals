@@ -1,13 +1,12 @@
 from abc import abstractmethod
-
-import time
-
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.config import TDSConfig
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
 
 from peripherals.sensors.unit_type import UnitType
+
+import time
 
 class TDSDriverBase(Sensor):
     config:TDSConfig = None
@@ -20,7 +19,7 @@ class TDSDriverBase(Sensor):
         super().__init__(SensorType.TDS, config.name, driver_name, unit_type=UnitType.TDS)
         
         self.config = config
-        self.simulated = simulated 
+        self.simulated = simulated
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate communication driver [{self.driver_name}] as the config validation failed.')        

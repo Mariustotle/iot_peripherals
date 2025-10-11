@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 from common.environment import Env
 from peripherals.peripheral_type import PeripheralType
+from typing import TYPE_CHECKING, Optional
 
+if TYPE_CHECKING:
+    from peripherals.catalog.device_catalog import DeviceCatalog
 
-class Peripheral(ABC):   
+class Peripheral(ABC):
     peripheral_type: PeripheralType = None
     name: str = None
     
@@ -14,6 +17,11 @@ class Peripheral(ABC):
     def __init__(self, peripheral_type:PeripheralType, name:str):
         self.peripheral_type = peripheral_type
         self.name = name
+        self._catalog: Optional["DeviceCatalog"] = None
+
+    def attach_catalog(self, catalog: "DeviceCatalog") -> None:
+        """Link this peripheral to the global device catalog."""
+        self._catalog = catalog
 
     @abstractmethod
     def get_description(self) -> str: pass

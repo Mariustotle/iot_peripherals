@@ -1,6 +1,4 @@
 from abc import abstractmethod
-
-
 from peripherals.sensors.digital_temp_sensors.config import DigitalTempConfig
 from peripherals.sensors.digital_temp_sensors.digital_temp_drivers import DigitalTempDrivers
 from peripherals.sensors.sensor import Sensor

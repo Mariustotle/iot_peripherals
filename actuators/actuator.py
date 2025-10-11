@@ -1,9 +1,10 @@
-from typing import Any, List as TypingList, Optional
 from peripherals.actuators.action_decorator import ActuatorAction
 from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.peripheral import Peripheral
 from peripherals.peripheral_type import PeripheralType
 from peripherals.actuators.action_decorator  import ActuatorAction, derive_params_from_signature
+from typing import Any, Optional
+
 
 import inspect
 

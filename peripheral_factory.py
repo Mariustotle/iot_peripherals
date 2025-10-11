@@ -7,7 +7,7 @@ from peripherals.peripheral_type import PeripheralType
 
 class PeripheralFactory(ABC):
     folder_path: str = None
-    peripherl_type: str = None
+    peripherl_type: str = None    
 
     def __init__(self, folder_path:str, peripheral_type:PeripheralType):
         self.folder_path = folder_path
@@ -37,6 +37,7 @@ class PeripheralFactory(ABC):
         try:
             module = importlib.import_module(module_path)
             driver_class = getattr(module, class_name)
+
         except (ModuleNotFoundError, AttributeError) as e:
             raise ImportError(f"Could not load driver '{class_name}': {e}")
 

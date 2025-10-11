@@ -13,7 +13,6 @@ class RelayDriverBase(Actuator):
     relay_pin:int = None
     relay_status:OnOffStatus = None         # The on/off status of the relay
     power_status:OnOffStatus = None         # Whether the power is on (based on relay status and default state)
-
     
     def __init__(self, config:RelayConfig, simulated:bool = False):
         driver = config.driver if config.driver is not None else RelayDrivers.Default

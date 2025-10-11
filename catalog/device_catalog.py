@@ -26,12 +26,14 @@ class DeviceCatalog:
         factory = SensorFactory()
         for config in sensors_config:
             sensor = factory.create(config, simulate=is_simulated)
+            sensor.attach_catalog(self)
             self.sensors.register(sensor)
 
     def register_actuators(self, actuators_config:List[Any], is_simulated:bool) -> None:
         factory = ActuatorFactory()
         for config in actuators_config:
             actuator = factory.create(config, simulate=is_simulated)
+            actuator.attach_catalog(self)
             self.actuators.register(actuator)
 
     def register_communication_modules(self, communications_config:List[Any], is_simulated:bool) -> None:

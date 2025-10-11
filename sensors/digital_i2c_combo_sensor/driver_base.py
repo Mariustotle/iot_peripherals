@@ -1,11 +1,9 @@
 from abc import abstractmethod
 
-
 from peripherals.sensors.digital_i2c_combo_sensor.config import DigitalComboConfig
 from peripherals.sensors.digital_i2c_combo_sensor.digital_combo_drivers import DigitalComboDrivers
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
-from peripherals.sensors.unit_type import UnitType
 
 class DigitalComboDriverBase(Sensor):    
     config:DigitalComboConfig = None
