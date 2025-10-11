@@ -7,6 +7,7 @@ from peripherals.communication.analog_digital_converter.adc_driver import ADCDri
 from peripherals.communication.communication import Communication
 from peripherals.communication.factory import CommunicationFactory
 from peripherals.catalog.catalog_category import CatalogCategory
+from peripherals.communication.i2c_multiplexer.connection import MultiplexerConnection
 from peripherals.communication.i2c_multiplexer.i2c_multiplexer_driver import I2CMultiplexerDriver
 from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor import Sensor
@@ -28,12 +29,17 @@ class DeviceCatalog:
         with self._lock:
             return self.sensors.all + self.actuators.all + self.communication_modules.all
         
-    def register_i2c_configuration(self, i2c_configuration:I2CBase) -> None:
-        if i2c_configuration.multiplexer_details is not None:
-            mux = self.communication_modules.get_by_name(i2c_configuration.multiplexer_details.name, I2CMultiplexerDriver)
-            if mux is None:
-                raise Exception(f"I2C Multiplexer '{i2c_configuration.multiplexer_details.name}' not found in catalog.")
-            i2c_configuration.multiplexer_details.set_multiplexer(mux)
+    def register_i2c_configuration(self, device_name:str, i2c_configuration:I2CBase):
+        if i2c_configuration.multiplexer_details is None:
+            return None        
+    
+        mux:I2CMultiplexerDriver = self.communication_modules.get_by_name(i2c_configuration.multiplexer_details.name, I2CMultiplexerDriver)
+        if mux is None:
+            raise Exception(f"I2C Multiplexer '{i2c_configuration.multiplexer_details.name}' not found in catalog.")
+        i2c_configuration.multiplexer_details.set_multiplexer(mux)
+
+        connection = MultiplexerConnection.create(device_name, i2c_configuration.i2c_address, i2c_configuration.multiplexer_details.channel)
+        mux.add_connection(connection)
 
     def register_adc_configuration(self, adc_configuration:AnalogBase) -> None:
         if adc_configuration.adc_details is not None:
@@ -51,12 +57,12 @@ class DeviceCatalog:
             if scan_for_i2c:
                 i2c_configuration = ObjectScanner.find_single_or_default(config, I2CBase)
                 if i2c_configuration is not None:
-                    self.register_i2c_configuration(i2c_configuration)
+                    self.register_i2c_configuration(peripheral.key, i2c_configuration)
 
             if scan_for_adc:
                 adc_configuration = ObjectScanner.find_single_or_default(config, AnalogBase)
                 if adc_configuration is not None:
-                    self.register_adc_configuration(adc_configuration)
+                    self.register_adc_configuration(peripheral.key, adc_configuration)
 
             if peripheral_type == PeripheralType.Sensor:
                 self.sensors.register(peripheral)

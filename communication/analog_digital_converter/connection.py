@@ -1,0 +1,2 @@
+class ADCConnection:
+    pass
