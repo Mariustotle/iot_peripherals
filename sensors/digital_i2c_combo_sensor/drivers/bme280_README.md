@@ -53,9 +53,9 @@ python -m pip install adafruit-circuitpython-bme280
                 "driver": null,                
                 "measurement": "Celsius",
                 "i2c_address": "0x76",
-                "multiplexer": {
+                "multiplexer_details": {
                     "name": "I2C Extender",
-                    "channel": 0
+                    "channel": 1
                 }
             }
         ],

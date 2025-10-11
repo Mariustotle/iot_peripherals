@@ -1,5 +1,5 @@
 from threading import RLock
-from typing import List, Optional, TypeVar, Generic, Dict
+from typing import Any, List, Optional, TypeVar, Generic, Dict
 
 from peripherals.peripheral import Peripheral
 
@@ -26,5 +26,12 @@ class CatalogCategory(Generic[T]):
     def get(self, key: str) -> Optional[T]:
         with self._lock:
             return self._registry.get(key)
+        
+    def get_by_name(self, name: str, class_type:Any) -> Optional[T]:
+        with self._lock:
+            for peripheral in self._registry.values():
+                if peripheral.name == name and isinstance(peripheral, class_type):
+                    return peripheral                
+            return None
 
 

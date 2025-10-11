@@ -8,15 +8,12 @@ The configuration is built up from the ADC config and where it is referenced in 
 
 ```json
 
- "CommunicationModules": {
+    "CommunicationModules": {
         "AnalogDigitalConverters": 
         [
             {
                 "name": "ADC for TDS",
-                "driver": "ads1115",
-                "spi_bus": 0,
-                "spi_device": 0,
-                "channel": 0
+                "gpio_pin": 18
             }
         ]
     }

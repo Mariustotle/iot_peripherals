@@ -4,7 +4,7 @@ from peripherals.communication.communication import Communication
 from peripherals.communication.communication_type import CommunicationType
 from peripherals.communication.i2c_multiplexer.config import I2CMultiplexerConfig
 
-class I2CExpanderDriver(Communication):    
+class I2CMultiplexerDriver(Communication):    
     config:I2CMultiplexerConfig = None
     simulated:bool = None
     

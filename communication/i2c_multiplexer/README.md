@@ -8,10 +8,10 @@ The configuration is built up from the I2C config and where it is referenced in 
 ```json
 
     "CommunicationModules": {
-        "I2CExpanders": 
+        "I2CMultiplexerConfig": 
         [
             {
-                "name": "I2C for LCD",
+                "name": "I2C Extender",
                 "multiplexer_address": "0x76",
                 "number_of_channels": 8
             }
