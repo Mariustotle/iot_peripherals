@@ -1,6 +1,0 @@
-from peripherals.communication.i2c_expander.i2c_expander_driver_base import I2CExpanderDriverBase
-
-class I2C_1602(I2CExpanderDriverBase):
-
-    pass
-

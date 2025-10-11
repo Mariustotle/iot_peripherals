@@ -30,14 +30,33 @@ python -m pip install adafruit-circuitpython-bme280
 
 ```json
 
+    /* Example where built in I2C is used */
     "Sensors" : {
         "I2CComboSensors" :
         [
             {
                 "name": "Workshop ENV Sensor",
-                "driver": null,
-                "i2c_address": "0x76",
-                "measurement": "Celsius"
+                "driver": null,                
+                "measurement": "Celsius",
+                "address": "0x76",
+                "multiplexer": null
+            }
+        ],
+    }
+
+    /* Example where I2C Multiplexer is used */
+    "Sensors" : {
+        "I2CComboSensors" :
+        [
+            {
+                "name": "Workshop ENV Sensor",
+                "driver": null,                
+                "measurement": "Celsius",
+                "address": "0x76",
+                "multiplexer": {
+                    "multiplexer_address": "0x70",
+                    "channel": 0
+                }
             }
         ],
     }

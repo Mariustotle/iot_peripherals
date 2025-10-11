@@ -15,6 +15,8 @@ These are general investigation toolkit.
   3. Select "I2C"
   4. Enable "Yes"
 
+- Install Libraries if missing
+  - ```sudo apt install i2c-tools```
 
 ## Is the device I2C working?
 
