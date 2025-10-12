@@ -29,19 +29,34 @@ class DeviceCatalog:
     actuators:CatalogCategory[Actuator] = None
     communication_modules:CatalogCategory[Communication] = None
 
+    warnings:List[str] = None
+
     @property
     def peripherals(self) -> List[Any]:
         with self._lock:
             return self.sensors.all + self.actuators.all + self.communication_modules.all
         
+    def validate(self):
+
+        if self.communication_modules is not None or len(self.communication_modules.all) > 0:
+            for comm in self.communication_modules.all:
+                if isinstance(comm, I2CMultiplexer) and len(comm.connections) == 0:
+                    self.warnings.append(f'I2C Multiplexer [{comm.key}] has no connected devices.')
+
+                if isinstance(comm, ADCModule) and len(comm.connections) == 0:
+                    self.warnings.append(f'ADC Module [{comm.key}] has no connected devices.')
+
+
     def get_device_configuration_summary(self) -> 'ConfigurationSummary':
+
         summary = ConfigurationSummary.create(
-            device_type=self.device_type, 
+            device_type=self.device_type,            
             pin_configurations=self.pin_configurations,
             sensors=self.sensors.all,
             actuators=self.actuators.all,
             i2c_multiplexers=[comm for comm in self.communication_modules.all if isinstance(comm, I2CMultiplexer)],
-            adc_modules=[comm for comm in self.communication_modules.all if isinstance(comm, ADCModule)]
+            adc_modules=[comm for comm in self.communication_modules.all if isinstance(comm, ADCModule)],
+            warnings=self.warnings
         )
 
         return summary
@@ -74,7 +89,7 @@ class DeviceCatalog:
 
         existing = next((p for p in self.pin_configurations if p.pin == pin_config.pin and p.scheme == pin_config.scheme), None)
         if existing:
-            raise Exception(f"Pin conflict detected for [{pin_config.name}]: Pin [{pin_config.pin}] with scheme [{pin_config.scheme}] is already registered as [{existing.name}].")
+            raise Exception(f"Pin conflict detected for [{pin_config.name}]: Pin [{pin_config.pin}] with scheme [{pin_config.scheme.name}] is already registered as [{existing.name}].")
 
         self.pin_configurations.append(pin_config)
 
@@ -118,6 +133,7 @@ class DeviceCatalog:
     
         self._lock = RLock()
         self.pin_configurations = []
+        self.warnings = []
         self.device_type = device_type
         self.sensors = CatalogCategory[Sensor]()
         self.actuators = CatalogCategory[Actuator]()
@@ -149,5 +165,7 @@ class DeviceCatalog:
                 is_simulated=is_simulated, 
                 scan_for_i2c=True, 
                 scan_for_adc=False)
+            
+        self.validate()
 
         
