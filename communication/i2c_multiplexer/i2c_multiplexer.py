@@ -33,4 +33,4 @@ class I2CMultiplexer(Communication):
             self.connections.append(connection)
 
     def get_description(self) -> str: 
-        return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.communication_type.name}], Name: [{self.name}] with configuration of XXXXXXXX."
+        return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.communication_type.name}], Name: [{self.name}] with [{len(self.connections)}] peripheral connections."
