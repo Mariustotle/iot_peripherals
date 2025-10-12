@@ -11,6 +11,9 @@ class PinConfig(BaseModel):
     name: Optional[str] = None
     scheme: PinNumberingScheme = PinNumberingScheme.BOARD
 
+    def __str__(self):
+        return f'{self.name} (Device Pin {self.pin} - {self.scheme.name})'
+
     @model_validator(mode="before")
     @classmethod
     def coerce(cls, value):

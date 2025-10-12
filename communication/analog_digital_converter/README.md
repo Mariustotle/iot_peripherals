@@ -15,7 +15,7 @@ The configuration is built up from the ADC config and where it is referenced in 
                 "name": "ADC for TDS",
                 "gpio_pin": 18
             }
-        ]
+        ],
     }
 
 ```

@@ -85,7 +85,7 @@ class DeviceCatalog:
             return
 
         if pin_config.name is None or pin_config.name == '':
-            pin_config.name = f'{source}-{counter}'
+            pin_config.name = f'{source} (pin-{counter})'
 
         existing = next((p for p in self.pin_configurations if p.pin == pin_config.pin and p.scheme == pin_config.scheme), None)
         if existing:
