@@ -39,7 +39,7 @@ class PeripheralFactory(ABC):
             driver_class = getattr(module, class_name)
 
         except (ModuleNotFoundError, AttributeError) as e:
-            raise ImportError(f"Could not load driver '{class_name}': {e}")
+            raise ImportError(f"Could not load driver '{class_name}' Path [{module_path}]: {e}")
 
         return driver_class(config, False)
        
