@@ -17,6 +17,14 @@ Pin functions (DHT11):
 - [-] - Ground
 
 
+### Special Libraries
+
+```bash
+sudo apt-get install libgpiod2
+pip install adafruit-circuitpython-dht
+pip install adafruit-blinka
+```
+
 ## Configuration
 
 ```json
