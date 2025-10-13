@@ -7,7 +7,7 @@ These are peripherals that measure things.
 Type                                                    | Description
 -------------                                           | ---------------
 [TDS](sensors/tds_sensors/README.md)                    | Measure particles
-Digital Temprature and Humidity | [DHT11](sensors/digital_temp_sensors/drivers/dht11_README.md/README.md) / [DHT22]() Sensors
+Digital Temprature and Humidity | [DHT11](sensors/digital_temp_sensors/drivers/dht11_README.md) / [DHT22](sensors/digital_temp_sensors/drivers/dht11_README.md) Sensors
 I2C Combo Sensors | [BMP280](sensors/digital_i2c_combo_sensor/drivers/bme280_README.md) Digital Temp/Air/Humidity
 Water Level | Measure when a specific water level is reached
 Temperature & Humidity | Measuring the temperature and humidity
@@ -28,5 +28,5 @@ These boards helps communication beween device and peripherals.
 
 Type                                                    | Description
 -------------                                           | ---------------
-[I2C Expander](communication/i2c_expander/README.md)    | Reduce pins needed
-[ADC](communication/analog_digital_converter/README.md) | Analog to Digital Converter
+[I2C Multiplexer](communication/i2c_multiplexer/README.md)    | Reduce pins needed
+[ADC Module](communication/analog_digital_converter/README.md) | Analog to Digital Converter
