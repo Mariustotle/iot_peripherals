@@ -32,7 +32,7 @@ class PeripheralFactory(ABC):
 
 
     def create_driver_instance(self, config:Any, file_name:str, class_name:str) -> 'Any':      
-        module_path = f"peripherals.{self.peripherl_type.value.lower()}.{self.folder_path}.drivers.{file_name}"
+        module_path = f"peripherals.{self.folder_path}.drivers.{file_name}"
 
         try:
             module = importlib.import_module(module_path)
