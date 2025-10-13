@@ -1,7 +1,10 @@
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
-import Adafruit_DHT
 from peripherals.sensors.digital_temp_sensors.response import DigitalTempResponse
+
+import os
+os.environ['ADAFRUIT_DHT_FORCE_RPI'] = '1'
+import Adafruit_DHT
 
 class DHT22(DigitalTempDriverBase):
     sensor = None
