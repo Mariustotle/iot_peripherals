@@ -5,7 +5,8 @@ import time
 import socket
 import subprocess
 from typing import Dict, Any, List, Optional
-import DeviceDiagnosticsBase
+
+from peripherals.devices.diagnostic_base import DeviceDiagnosticsBase
 
 
 class RaspberryPiDiagnostics(DeviceDiagnosticsBase):

@@ -6,15 +6,16 @@ from peripherals.devices.diagnostic_base import DeviceDiagnosticsBase
 
 class DeviceDiagnosticFactory:
 
+    RPI_DEVICES = {DeviceType.RaspberryPi3, DeviceType.RaspberryPi4, DeviceType.RaspberryPi5}
+
     @staticmethod
-    def create_device(device_type: DeviceType, simulate:bool) -> DeviceDiagnosticsBase:
+    def create_device(device_type: DeviceType, simulate:bool) -> DeviceDiagnosticsBase:        
         """Factory method to create device diagnostics instances."""
-        device_type = device_type.lower()
         if simulate:
             from peripherals.devices.device_simulator import DeviceSimulator
             return DeviceSimulator()
 
-        if device_type in (DeviceType.RaspberryPi3, DeviceType.RaspberryPi4, DeviceType.RaspberryPi5):
+        if device_type in DeviceDiagnosticFactory.RPI_DEVICES:
             from peripherals.devices.rapberry_pi import RaspberryPiDiagnostics
             return RaspberryPiDiagnostics()
 

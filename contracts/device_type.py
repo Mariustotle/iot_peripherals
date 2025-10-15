@@ -2,7 +2,7 @@
 from enum import Enum
 
 class DeviceType(str, Enum):
-    Unknown = "Unkown"
+    Unknown = "Unknown"
     RaspberryPi3  = "Raspberry Pi 3"
     RaspberryPi4 = "Raspberry Pi 4"
     RaspberryPi5 = "Raspberry Pi 5"
