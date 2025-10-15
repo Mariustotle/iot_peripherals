@@ -23,6 +23,7 @@ class DeviceCatalog:
 
     _lock:RLock = None
     
+    simulated:bool = None
     device_type:DeviceType = None
     pin_configurations:List[PinConfig] = None
     sensors:CatalogCategory[Sensor] = None
@@ -132,6 +133,7 @@ class DeviceCatalog:
         ):
     
         self._lock = RLock()
+        self.simulated = is_simulated
         self.pin_configurations = []
         self.warnings = []
         self.device_type = device_type
