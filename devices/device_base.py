@@ -1,8 +1,54 @@
 from typing import Dict, Any, List, Optional
 import inspect
 
+from peripherals.contracts.device_type import DeviceType
+from peripherals.contracts.pins.pin_number import PinNumber
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_types import PinType
+from peripherals.devices.device_feature import DeviceFeature
 
-class DeviceDiagnosticsBase:
+class DeviceBase:
+    device_type:DeviceType = None
+    default_pin_type:PinType = None
+    available_pins:dict[PinNumber, PinDetails] = None
+
+    i2c_feature:Optional[DeviceFeature] = None
+    uart_feature:Optional[DeviceFeature] = None
+    spi_feature:Optional[DeviceFeature] = None
+
+    def __init__(self, device_type:DeviceType, default_pin_type:PinType):
+        self.device_type = device_type
+        self.pin_default_type = default_pin_type
+        self.available_pins: dict[PinNumber, PinDetails] = {}
+        self.available_pins = self.configure_available_pins()
+
+
+    def add_pin(self, gpio_number:Optional[int], board_number:Optional[int], standard_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None, special_mode:Optional[PinType] = None):
+        pin_number = PinNumber(gpio_pin=gpio_number, board_pin=board_number)
+        
+        found = self.available_pins.get(pin_number)
+
+        if (not found):
+            standard_mode = standard_mode if standard_mode else self.pin_default_type
+            self.available_pins[pin_number] = PinDetails(standard_mode=standard_mode, special_mode=special_mode, feature=feature)
+
+        else:
+            raise Exception(f'[board_pin={board_number}/gpio_pin={gpio_number}] pin have already been added.')
+        
+
+    def configure_available_pins(self):
+         raise Exception(f'Please override [configure_available_pins] in the base class.')
+
+
+
+
+
+
+
+    
+    '''
+    
+
     """Flexible base class for IoT device health and diagnostics."""
 
     # === Identification (optional overrides) ===
@@ -78,3 +124,5 @@ class DeviceDiagnosticsBase:
             else:
                 print(f"{key.replace('_', ' ').title()}: {value}")
         print("============================================\n")
+
+    '''

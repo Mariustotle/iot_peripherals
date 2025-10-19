@@ -11,7 +11,7 @@ from peripherals.communication.i2c_multiplexer.connection import MultiplexerConn
 from peripherals.communication.i2c_multiplexer.i2c_multiplexer import I2CMultiplexer
 from peripherals.contracts.configuration_summary import ConfigurationSummary
 from peripherals.contracts.device_type import DeviceType
-from peripherals.contracts.pin_config import PinConfig
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.factory import SensorFactory

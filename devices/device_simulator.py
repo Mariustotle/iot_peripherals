@@ -2,7 +2,7 @@ import random
 import time
 from typing import Dict, Any
 
-from peripherals.devices.diagnostic_base import DeviceDiagnosticsBase
+from peripherals.devices.device_base import DeviceDiagnosticsBase
 
 
 class DeviceSimulator(DeviceDiagnosticsBase):

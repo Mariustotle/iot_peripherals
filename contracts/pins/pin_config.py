@@ -1,15 +1,17 @@
 from typing import Optional
 from enum import Enum
 from pydantic import BaseModel, model_validator
-
-class PinNumberingScheme(str, Enum):
-    BOARD = "BOARD"
-    BCM = "BCM"
+from peripherals.contracts.pins.pin_numbering_scheme import PinNumberingScheme
+from peripherals.contracts.pins.pin_types import PinType
 
 class PinConfig(BaseModel):
     pin: int
     name: Optional[str] = None
     scheme: PinNumberingScheme = PinNumberingScheme.BOARD
+    type:Optional[PinType] = PinType.Default
+
+    def set_type(self, new_type: PinType) -> None:
+        self.type = new_type
 
     def __str__(self):
         return f'{self.name} (Device Pin {self.pin} - {self.scheme.name})'
@@ -20,6 +22,7 @@ class PinConfig(BaseModel):
         if isinstance(value, int):
             return {"pin": value}
         return value
+    
 
 
 '''

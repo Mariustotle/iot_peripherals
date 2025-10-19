@@ -2,14 +2,14 @@
 
 
 from peripherals.contracts.device_type import DeviceType
-from peripherals.devices.diagnostic_base import DeviceDiagnosticsBase
+from peripherals.devices.device_base import DeviceBase
 
 class DeviceDiagnosticFactory:
 
     RPI_DEVICES = {DeviceType.RaspberryPi3, DeviceType.RaspberryPi4, DeviceType.RaspberryPi5}
 
     @staticmethod
-    def create_device(device_type: DeviceType, simulate:bool) -> DeviceDiagnosticsBase:        
+    def create_device(device_type: DeviceType, simulate:bool) -> DeviceBase:        
         """Factory method to create device diagnostics instances."""
         if simulate:
             from peripherals.devices.device_simulator import DeviceSimulator

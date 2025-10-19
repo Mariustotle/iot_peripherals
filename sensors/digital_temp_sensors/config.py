@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-from peripherals.contracts.pin_config import PinConfig
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_temp_sensors.digital_temp_drivers import DigitalTempDrivers
 

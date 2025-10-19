@@ -6,10 +6,10 @@ import socket
 import subprocess
 from typing import Dict, Any, List, Optional
 
-from peripherals.devices.diagnostic_base import DeviceDiagnosticsBase
+from peripherals.devices.device_base import DeviceBase
 
 
-class RaspberryPiDiagnostics(DeviceDiagnosticsBase):
+class RaspberryPiDiagnostics(DeviceBase):
     """Diagnostics implementation that adapts automatically to Raspberry Pi 3, 4, or 5."""
 
     def __init__(self):

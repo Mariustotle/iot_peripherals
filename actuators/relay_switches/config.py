@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
 from peripherals.contracts.on_off_status import OnOffStatus
-from peripherals.contracts.pin_config import PinConfig
+from peripherals.contracts.pins.pin_config import PinConfig
 
 class RelayConfig(BaseModel):
     name: str = None

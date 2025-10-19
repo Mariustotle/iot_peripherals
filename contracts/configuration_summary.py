@@ -6,7 +6,7 @@ from peripherals.actuators.actuator import Actuator
 from peripherals.communication.analog_digital_converter.adc_module import ADCModule
 from peripherals.communication.i2c_multiplexer.i2c_multiplexer import I2CMultiplexer
 from peripherals.contracts.device_type import DeviceType
-from peripherals.contracts.pin_config import PinConfig
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.sensors.sensor import Sensor
 
 class ConfigurationSummary(BaseModel):
