@@ -1,37 +1,70 @@
-import random
-import time
-from typing import Dict, Any
+import os
+from peripherals.contracts.device_type import DeviceType
+from peripherals.contracts.pins.pin_types import PinType
+from peripherals.devices.device_base import DeviceBase
+from peripherals.devices.device_feature import DeviceFeature
 
-from peripherals.devices.device_base import DeviceDiagnosticsBase
-
-
-class DeviceSimulator(DeviceDiagnosticsBase):
-    """Simulated device for development and testing."""
+class DeviceSimulator(DeviceBase):
 
     def __init__(self):
-        super().__init__()
-        self.start_time = time.time()
-        self._fake_peripherals = [
-            "Simulated-TemperatureSensor",
-            "Simulated-HumiditySensor",
-            "Virtual-I2C-Module",
-        ]
+        super().__init__(DeviceType.RaspberryPi3, PinType.DIGITAL)
+        self.configure_available_pins()
 
-    def device_name(self): return "Simulated IoT Device"
-    def firmware_version(self): return "SimOS 1.0.0"
-    def uptime(self): return round(time.time() - self.start_time, 1)
 
-    def cpu_usage(self): return round(random.uniform(1, 30), 1)
-    def memory_usage(self): 
-        used_percent = random.uniform(20, 70)
-        return {"total": 1024*1024*512, "used": used_percent, "percent": used_percent}
-    def temperature(self): return round(random.uniform(25.0, 45.0), 1)
-    def available_gpio_pins(self): return list(range(2, 28))
-    def network_status(self): 
-        return {"status": "Online", "ip": f"192.168.0.{random.randint(2, 250)}"}
-    def connected_peripherals(self): return random.sample(self._fake_peripherals, k=random.randint(1, len(self._fake_peripherals)))
-    def run_diagnostics(self) -> Dict[str, Any]:
-        return {
-            "simulated_load_test": random.choice(["Pass", "Fail"]),
-            "last_run": time.ctime(),
-        }
+    # --------------------------------------------------------
+    # Feature Builders
+    # --------------------------------------------------------
+
+    def _build_i2c_feature(self) -> 'DeviceFeature':
+        is_supported = True
+        is_enabled = True
+        return DeviceFeature.create("I2C", is_supported, is_enabled)
+
+    def _build_uart_feature(self) -> 'DeviceFeature':
+        is_supported = True
+        is_enabled = True
+        return DeviceFeature.create("UART", is_supported, is_enabled)
+
+    def _build_spi_feature(self) -> 'DeviceFeature':
+        is_supported = True
+        is_enabled = True
+        return DeviceFeature.create("SPI", is_supported, is_enabled)
+
+    def _build_pwm_feature(self) -> 'DeviceFeature':
+        is_supported = True
+        is_enabled = True
+        return DeviceFeature.create("PWM", is_supported, is_enabled)
+
+    # --------------------------------------------------------
+    # Pin Configuration
+    # --------------------------------------------------------
+
+    def configure_available_pins(self):
+
+        # I2C
+        i2c_feature = self._build_i2c_feature()
+        self.add_pin(2, 3, PinType.I2C_SDA, i2c_feature)
+        self.add_pin(3, 5, PinType.I2C_SCL, i2c_feature)
+
+        # UART
+        uart_feature = self._build_uart_feature()
+        self.add_pin(14, 8, PinType.UART_TX, uart_feature)
+        self.add_pin(15, 10, PinType.UART_RX, uart_feature)
+
+        # SPI
+        spi_feature = self._build_spi_feature()
+        self.add_pin(9, 21, PinType.SPI_MISO, spi_feature)
+        self.add_pin(10, 19, PinType.SPI_MOSI, spi_feature)
+        self.add_pin(11, 23, PinType.SPI_SCLK, spi_feature)
+        self.add_pin(8, 24, PinType.SPI_CE0, spi_feature)
+        self.add_pin(7, 26, PinType.SPI_CE1, spi_feature)
+
+        # PWM
+        pwm_feature = self._build_pwm_feature()
+        self.add_pin(12, 32, PinType.PWM_0, pwm_feature)
+        self.add_pin(13, 33, PinType.PWM_1, pwm_feature)
+        self.add_pin(18, 12, PinType.PWM_0, pwm_feature)
+
+        # Standard GPIO (no special mode, no feature object)
+        self.add_pin(4, 7)
+        self.add_pin(25, 22)
