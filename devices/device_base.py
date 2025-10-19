@@ -4,10 +4,12 @@ from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.pin_number import PinNumber
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_types import PinType
+from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.device_feature import DeviceFeature
 
 class DeviceBase:
     device_type:DeviceType = None
+    adapter:AdapterBase = None
     default_pin_type:PinType = None
     available_pins:dict[PinNumber, PinDetails] = None
 
@@ -34,11 +36,12 @@ class DeviceBase:
         return found
 
 
-    def __init__(self, device_type:DeviceType, default_pin_type:PinType):
+    def __init__(self, device_type:DeviceType, adapter:AdapterBase, default_pin_type:PinType):
         self.device_type = device_type
+        self.adapter = adapter
         self.pin_default_type = default_pin_type
         self.available_pins: dict[PinNumber, PinDetails] = {}
-        self.available_pins = self.configure_available_pins()
+        self.configure_available_pins()
 
 
     def add_pin(self, gpio_number:Optional[int], board_number:Optional[int], standard_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None, special_mode:Optional[PinType] = None):

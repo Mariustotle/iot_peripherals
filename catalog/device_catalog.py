@@ -9,6 +9,7 @@ from peripherals.communication.factory import CommunicationFactory
 from peripherals.catalog.catalog_category import CatalogCategory
 from peripherals.communication.i2c_multiplexer.connection import MultiplexerConnection
 from peripherals.communication.i2c_multiplexer.i2c_multiplexer import I2CMultiplexer
+from peripherals.contracts.adapter_type import AdapterType
 from peripherals.contracts.configuration_summary import ConfigurationSummary
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.pin_config import PinConfig
@@ -25,6 +26,7 @@ class DeviceCatalog:
     
     simulated:bool = None
     device_type:DeviceType = None
+    adapter_type:AdapterType = None
     pin_configurations:List[PinConfig] = None
     sensors:CatalogCategory[Sensor] = None
     actuators:CatalogCategory[Actuator] = None
@@ -127,6 +129,7 @@ class DeviceCatalog:
     def __init__(self,
             is_simulated:bool = False,     
             device_type:DeviceType = DeviceType.Unknown,      
+            adapter_type:AdapterType = AdapterType.Unknown,
             sensors_config:Optional[List[Any]] = None,
             actuators_config:Optional[List[Any]] = None,                 
             communications_config:Optional[List[Any]] = None   
@@ -137,6 +140,7 @@ class DeviceCatalog:
         self.pin_configurations = []
         self.warnings = []
         self.device_type = device_type
+        self.adapter_type = adapter_type
         self.sensors = CatalogCategory[Sensor]()
         self.actuators = CatalogCategory[Actuator]()
         self.communication_modules = CatalogCategory[Communication]()
