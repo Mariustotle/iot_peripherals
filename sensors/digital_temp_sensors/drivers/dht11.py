@@ -6,7 +6,8 @@ import RPi.GPIO as GPIO
 import time
 
 
-class DHT11(DigitalTempDriverBase):
+class DHT11(DigitalTempDriverBase): 
+        
 
     def initialize(self) -> bool:
 

@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from peripherals.devices.device_base import DeviceBase
 from peripherals.sensors.digital_i2c_combo_sensor.config import DigitalComboConfig
 from peripherals.sensors.digital_i2c_combo_sensor.digital_combo_drivers import DigitalComboDrivers
 from peripherals.sensors.sensor import Sensor
@@ -24,5 +25,8 @@ class DigitalComboDriverBase(Sensor):
             raise Exception(f'Unable to instanciate Digital Temperature Driver [{self.driver_name}] as the config validation failed.')        
 
     # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:DigitalComboConfig) -> bool:  return True
-
+    def validate(self, config:DigitalComboConfig, device:DeviceBase) -> bool:
+        
+        # How to validate features?
+        
+        return True

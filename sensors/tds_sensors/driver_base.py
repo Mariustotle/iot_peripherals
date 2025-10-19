@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from peripherals.devices.device_base import DeviceBase
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.tds_sensors.config import TDSConfig
@@ -24,8 +25,6 @@ class TDSDriverBase(Sensor):
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate communication driver [{self.driver_name}] as the config validation failed.')        
 
-    # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:TDSConfig) -> bool:  return True
 
     def read_multiple(self, number_of_reads:int) -> float:
         total = 0.0
@@ -55,6 +54,6 @@ class TDSDriverBase(Sensor):
     def get_description(self) -> str: 
         return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.sensor_type.name}], Driver: [{self.driver_name}] over average of [{self.config.number_of_readings}] readings."
 
-
-
-
+    # Can be overrided in driver specific implimentation for special rules
+    def validate(self, config:TDSConfig, device:DeviceBase) -> bool: return True
+        

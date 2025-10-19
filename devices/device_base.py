@@ -1,8 +1,10 @@
 from typing import Optional
 
 from peripherals.contracts.device_type import DeviceType
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.contracts.pins.pin_number import PinNumber
 from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_numbering_scheme import PinNumberingScheme
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.device_feature import DeviceFeature
@@ -61,8 +63,19 @@ class DeviceBase:
          raise Exception(f'Please override [configure_available_pins] in the base class.')
     
 
-    def validate_pin(self, pin_type:PinType,  gpio_number:Optional[int], board_number:Optional[int]):
-        device_pin = self._find_pin(gpio_number=gpio_number, board_number=board_number)        
+    def validate_pin(self, pin_type:PinType, pin_config:PinConfig):
+        valid:bool = None
+        reason:str = None
+
+
+        device_pin:PinDetails = None
+
+        if pin_config.scheme == PinNumberingScheme.BCM:
+            device_pin = self._find_pin(gpio_number=pin_config.pin) 
+        elif pin_config.scheme == PinNumberingScheme.BOARD:
+            device_pin = self._find_pin(board_number=pin_config.pin) 
+        else:
+            return (False, f'Unable to validate pin for scheme [{pin_config.scheme}] pin [{pin_config.pin}] as it is not configured.')
 
         standard_pin = True if device_pin.feature == None or not device_pin.feature.enabled else False
         pin_supports_type:bool = True if device_pin.standard_mode == pin_type or device_pin.special_mode == pin_type else False
@@ -78,13 +91,14 @@ class DeviceBase:
 
         if not pin_supports_type:
             # Show other pins that support this type
-            msg = "\n".join(f" - Pin: GPIO=[{key.gpio_pin}], BOARD=[{key.board_pin}]" for (key, value) in self.available_pins if value.standard_mode == pin_type or value.special_mode == pin_type)
-            raise Exception(f'Unable to use pin (GPIO=[{gpio_number}], BOARD=[{board_number}]) the specified pin does not support [{pin_type.name}]. Other pins on [{self.device_type.name}] that support this type of pin is: {msg}')
+            options = "\n".join(f" - Pin: GPIO=[{key.gpio_pin}], BOARD=[{key.board_pin}]" for (key, value) in self.available_pins if value.standard_mode == pin_type or value.special_mode == pin_type)
+            return (False, f'Unable to use pin (Scheme=[{pin_config.scheme.name}], Pin=[{pin_config.pin}]) the specified pin does not support [{pin_type.name}]. Other pins on [{self.device_type.name}] that support this type of pin is: {options}')
+
 
         if not pin_type_validated:
-            raise Exception(f'Pin (GPIO=[{gpio_number}], BOARD=[{board_number}]) has not been able to validate usage of [{pin_type.name}]. Standard=[{device_pin.standard_mode.name}], Special=[{device_pin.special_mode.name if device_pin.special_mode else 'N/A'}], feature=[{str(device_pin.feature)}]')
+            return (False, f'Pin (Scheme=[{pin_config.scheme.name}], Pin=[{pin_config.pin}]) has not been able to validate usage of [{pin_type.name}]. Standard=[{device_pin.standard_mode.name}], Special=[{device_pin.special_mode.name if device_pin.special_mode else 'N/A'}], feature=[{str(device_pin.feature)}]')
 
-        return True # Validated
+        return (True, None)
     
     '''
     
