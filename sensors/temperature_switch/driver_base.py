@@ -30,11 +30,15 @@ class TempSwitchDriverBase(Sensor):
             raise Exception(f'Unable to instanciate Digital Temperature Driver [{self.driver_name}] as the config validation failed.')        
 
     # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:TempSwitchConfig, device:DeviceBase) -> bool:
-        
+    def validate(self, config:TempSwitchConfig) -> bool:
+        return True
+    
+        '''
         (validated, reason) = device.validate_pin(PinType.DIGITAL, config.gpio_out_pin)
         if (not validated):
             print(reason)
         
         return validated
+        '''
+        
 

@@ -55,5 +55,5 @@ class TDSDriverBase(Sensor):
         return f"Peripheral: [{self.peripheral_type.name}], Communication: [{self.sensor_type.name}], Driver: [{self.driver_name}] over average of [{self.config.number_of_readings}] readings."
 
     # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:TDSConfig, device:DeviceBase) -> bool: return True
+    def validate(self, config:TDSConfig) -> bool: return True
         

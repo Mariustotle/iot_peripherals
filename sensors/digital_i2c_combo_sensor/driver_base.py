@@ -25,7 +25,7 @@ class DigitalComboDriverBase(Sensor):
             raise Exception(f'Unable to instanciate Digital Temperature Driver [{self.driver_name}] as the config validation failed.')        
 
     # Can be overrided in driver specific implimentation for special rules
-    def validate(self, config:DigitalComboConfig, device:DeviceBase) -> bool:
+    def validate(self, config:DigitalComboConfig) -> bool:
         
         # How to validate features?
         
