@@ -13,7 +13,7 @@ class DeviceBase(BoardBase):
     adapter:AdapterBase = None
     default_pin_type:PinType = None    
 
-    @staticmethod
+    @property
     def device_pins(self) -> Dict[PinPosition, GpioPinDetails]:
         return cast(Dict[PinPosition, GpioPinDetails], self.pins)
     
@@ -29,7 +29,6 @@ class DeviceBase(BoardBase):
 
     def add_gpio_pin(self, pin_details:GpioPinDetails, pin_position:PinPosition, name:Optional[str] = None):
         super().add_pin(name=name, pin_details=pin_details, pin_position=pin_position)
-        self.configured_pins = []
 
     def get_gpio_pin(self, pin: int, scheme: PinNumberingScheme) -> tuple[PinPosition, GpioPinDetails] | tuple[None, None]:
         # Ensure you're iterating over .items(), not the function itself

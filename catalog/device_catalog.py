@@ -13,6 +13,7 @@ from peripherals.contracts.adapter_type import AdapterType
 from peripherals.contracts.configuration_summary import ConfigurationSummary
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.pin_config import PinConfig
+from peripherals.devices.device_base import DeviceBase
 from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.factory import SensorFactory
@@ -24,6 +25,7 @@ class DeviceCatalog:
 
     _lock:RLock = None
     
+    device:Optional[DeviceBase] = None
     simulated:bool = None
     device_type:DeviceType = None
     adapter_type:AdapterType = None
@@ -127,6 +129,7 @@ class DeviceCatalog:
 
 
     def __init__(self,
+            device: Optional[DeviceBase] = None,
             is_simulated:bool = False,     
             device_type:DeviceType = DeviceType.Unknown,      
             adapter_type:AdapterType = AdapterType.Unknown,
@@ -136,6 +139,8 @@ class DeviceCatalog:
         ):
     
         self._lock = RLock()
+
+        self.device = device
         self.simulated = is_simulated
         self.pin_configurations = []
         self.warnings = []

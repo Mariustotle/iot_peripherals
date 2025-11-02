@@ -16,8 +16,19 @@ class GpioPinDetails(PinDetails):
     def standard_mode(self) -> PinType:
         return self.type
 
+    @property
+    def label(self):
+        has_special = self.special_mode
+        is_special = has_special and self.feature and self.feature.enabled
+
+        label = self.standard_mode.short if (not has_special or not is_special) else self.special_mode.short            
+        gpio = '' if not self.gpio_pin or is_special else f'-G{self.gpio_pin}'
+        
+        return f'{'*' if has_special else ''}{label}{gpio}'
+
+
     @staticmethod
-    def create(board_pin:int, standard_mode:PinType, gpio_pin:Optional[int] = None, label:Optional[str] = None, special_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None):
-        return GpioPinDetails(board_pin=board_pin, gpio_pin=gpio_pin, type=standard_mode, label=label, special_mode=special_mode, feature=feature)
+    def create(board_pin:int, standard_mode:PinType, gpio_pin:Optional[int] = None, name:Optional[str] = None, special_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None):
+        return GpioPinDetails(board_pin=board_pin, gpio_pin=gpio_pin, type=standard_mode, name=name, special_mode=special_mode, feature=feature)
 
 
