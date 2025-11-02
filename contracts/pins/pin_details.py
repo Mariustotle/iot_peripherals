@@ -1,15 +1,17 @@
 
+from abc import ABC
 from typing import Optional
 
+from pydantic import BaseModel
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
-from peripherals.devices.device_feature import DeviceFeature
 
-class PinDetails:
-    standard_mode:PinType = None
-    special_mode:Optional[PinType] = None
-    feature:Optional[DeviceFeature] = None    
+class PinDetails(ABC, BaseModel):
+    type:PinType = None
+    label:Optional[str] = None
+    source_pin:Optional[PinPosition] = None
 
-    def __init__(self, standard_mode:PinType, special_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None):
-        self.standard_mode = standard_mode
-        self.special_mode = special_mode
-        self.feature = feature
+    @staticmethod
+    def create(type:PinType, label:Optional[str] = None, source_pin:Optional[PinPosition] = None):
+        return PinDetails(type=type, label=label, source_pin=source_pin)
+

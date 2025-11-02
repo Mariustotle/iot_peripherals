@@ -3,12 +3,13 @@
 
 from peripherals.contracts.adapter_type import AdapterType
 from peripherals.contracts.device_type import DeviceType
+from peripherals.contracts.pins.pin_types import PinType
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.adapters.adapter_simulator import AdapterSimulator
 from peripherals.devices.adapters.raspberry_os_trixy_adapter import RaspberryOSTrixyAdapter
 from peripherals.devices.device_base import DeviceBase
 from peripherals.devices.raspberry_pi_3 import RaspberryPi3
-from peripherals.devices.raspberry_pi_4 import RaspberryPi4
+
 
 class DeviceFactory:
 
@@ -29,10 +30,7 @@ class DeviceFactory:
         adapter = DeviceFactory._create_adapter(adapter_type, simulate)
 
         if device_type == DeviceType.RaspberryPi3:
-            return RaspberryPi3(adapter)
-        
-        if device_type == DeviceType.RaspberryPi4:
-            return RaspberryPi4(adapter)
+            return RaspberryPi3(device_type=device_type, adapter=adapter, default_pin_type=PinType.DIGITAL)     
 
         else:
             raise ValueError(f"Unsupported device type: {device_type}")

@@ -2,6 +2,9 @@ from enum import Enum
 
 class PinType(str, Enum):
     Default = "default"
+    Ground = "ground"
+    Power3V = "power_3.3v"
+    Power5V = "power_5v"
     DIGITAL = "digital"
     ANALOG = "analog"
     I2C_SDA = "i2c_sda"
