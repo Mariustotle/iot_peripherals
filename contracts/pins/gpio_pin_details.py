@@ -17,18 +17,21 @@ class GpioPinDetails(PinDetails):
         return self.type
 
     @property
-    def label(self):
-        has_special = self.special_mode
-        is_special = has_special and self.feature and self.feature.enabled
+    def multi_function(self):
+        return self.special_mode is not None
 
-        label = self.standard_mode.short if (not has_special or not is_special) else self.special_mode.short            
+    @property
+    def label(self):
+        is_special = self.multi_function and self.feature and self.feature.enabled
+
+        label = self.standard_mode.short if (not self.multi_function or not is_special) else self.special_mode.short            
         gpio = '' if not self.gpio_pin or is_special else f'-G{self.gpio_pin}'
         
-        return f'{'*' if has_special else ''}{label}{gpio}'
+        return f'{label}{gpio}'
 
 
     @staticmethod
-    def create(board_pin:int, standard_mode:PinType, gpio_pin:Optional[int] = None, name:Optional[str] = None, special_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None):
-        return GpioPinDetails(board_pin=board_pin, gpio_pin=gpio_pin, type=standard_mode, name=name, special_mode=special_mode, feature=feature)
+    def create(board_pin:int, standard_mode:PinType, gpio_pin:Optional[int] = None, name:Optional[str] = None, special_mode:Optional[PinType] = None, feature:Optional[DeviceFeature] = None, in_use:bool = False):
+        return GpioPinDetails(board_pin=board_pin, gpio_pin=gpio_pin, type=standard_mode, name=name, special_mode=special_mode, feature=feature, in_use=in_use)
 
 

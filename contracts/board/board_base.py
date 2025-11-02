@@ -1,13 +1,12 @@
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from peripherals.contracts.board.pin_association import PinAssociation
 from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_display import PinDisplay
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
-
-# TODO: Use this for the base of all devices and pheripherals
 
 class BoardBase(ABC):
     name:str = None
@@ -48,9 +47,29 @@ class BoardBase(ABC):
         
         self.associated_pins[position] = PinAssociation.create(source=source, other_position=other_position, my_position=position, type=type)
 
-
-
     def get_pin_by_position(self, horizontal_pos:int = 1, vertical_pos:int = 1):
         position  = next((k for k in self.pins if k.horizontal_position == horizontal_pos and k.vertical_position == vertical_pos), None)
 
         return (None, None) if not position else (position, self.pins.get(position))
+    
+
+    def get_pin_display_matrix(self) -> List[List[PinDisplay]]:
+
+        # Determine the full coordinate range
+        all_h = [p.horizontal_position for p in self.pins.keys()]
+        all_v = [p.vertical_position for p in self.pins.keys()]
+        max_h = max(all_h)
+        max_v = max(all_v)
+
+        # Create a 2D matrix covering the entire range (inclusive of both min and max)
+        matrix = [[None for _ in range(max_h)] for _ in range(max_v)]
+
+        # Iterate through every possible coordinate permutation (v, h)
+        for v in range(1, max_v+1):
+            for h in range(1, max_h+1):
+                # Find pin with these coordinates
+                (position, pin) = self.get_pin_by_position(horizontal_pos=h, vertical_pos=v)
+
+                matrix[v-1][h-1] = None if not pin else PinDisplay.create(name=pin.label, in_use=pin.in_use, multi_function=pin.multi_function)
+
+        return matrix
