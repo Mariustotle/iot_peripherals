@@ -22,3 +22,7 @@ class PinPosition:
     @staticmethod
     def create(horizontal_pos:int = 1, vertical_pos:int = 1) -> 'PinPosition':
         return PinPosition(horizontal_position=horizontal_pos, vertical_position=vertical_pos)
+    
+
+    def __str__(self):
+        return f'Vertical: [{self.vertical_position}], Horizontal: [{self.horizontal_position}]'
