@@ -19,14 +19,14 @@ class AdapterBase(ABC):
         self.adapter_type = adapter_type
         self.simulated = simulated
 
-    def build_i2c_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        raise Exception(f'Unable to execute _build_i2c_feature for adapter [{self.adapter_name}] as it is not implimented in the derived class.')
+    def build_i2c_feature(self, instance:int = 0) -> 'DeviceFeature':
+        raise Exception(f'Unable to execute _build_i2c_feature for adapter [{self.adapter_name}] #[{instance}] as it is not implimented in the derived class.')
 
-    def build_uart_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        raise Exception(f'Unable to execute _build_uart_feature for adapter [{self.adapter_name}] as it is not implimented in the derived class.')
+    def build_uart_feature(self, instance:int = 0) -> 'DeviceFeature':
+        raise Exception(f'Unable to execute _build_uart_feature for adapter [{self.adapter_name}] #[{instance}] as it is not implimented in the derived class.')
 
-    def build_spi_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        raise Exception(f'Unable to execute _build_spi_feature for adapter [{self.adapter_name}] as it is not implimented in the derived class.')
+    def build_spi_feature(self, instance:int = 0) -> 'DeviceFeature':
+        raise Exception(f'Unable to execute _build_spi_feature for adapter [{self.adapter_name}] #[{instance}] as it is not implimented in the derived class.')
 
-    def build_pwm_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        raise Exception(f'Unable to execute _build_pwm_feature for adapter [{self.adapter_name}] as it is not implimented in the derived class.')
+    def build_pwm_feature(self, instance:int = 0) -> 'DeviceFeature':
+        raise Exception(f'Unable to execute _build_pwm_feature for adapter [{self.adapter_name}] #[{instance}] as it is not implimented in the derived class.')

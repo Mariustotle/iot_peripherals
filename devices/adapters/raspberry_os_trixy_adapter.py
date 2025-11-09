@@ -1,70 +1,92 @@
 
 
 import os
-from typing import Optional
+from peripherals.contracts.adapter_type import AdapterType
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.device_feature import DeviceFeature
 
 class RaspberryOSTrixyAdapter(AdapterBase):
+    """
+    Adapter implementation for Raspberry Pi OS Bookworm and Trixie (2023+).
+    Detects and enables features dynamically from /sys and /dev interfaces.
+    """
 
+    def __init__(self, adapter_type: AdapterType):
+        super().__init__(adapter_type, simulated=False)
 
     # --------------------------------------------------------
-    # Feature Detection Helpers
+    # I2C
     # --------------------------------------------------------
+    def build_i2c_feature(self, instance: int = 0) -> 'DeviceFeature':
+        name = f"I2C-{instance}"
+        dev_path = f"/dev/i2c-{instance}"
 
-    def is_feature_enabled_in_config(self, keyword: str) -> bool:
+        supported = os.path.exists(dev_path)
+        enabled = supported and self._is_module_loaded("i2c_bcm2835")
+        return DeviceFeature.create(name, supported, enabled)
+
+    # --------------------------------------------------------
+    # UART
+    # --------------------------------------------------------
+    def build_uart_feature(self, instance: int = 0) -> 'DeviceFeature':
+        name = f"UART-{instance}"
+
+        # Default serial port for Pi OS (Bookworm/Trixie)
+        uart_devices = ["/dev/serial0", "/dev/ttyAMA0", "/dev/ttyS0"]
+        supported = any(os.path.exists(dev) for dev in uart_devices)
+
+        # On modern Pi OS, serial console may be disabled or linked to Bluetooth
+        enabled = supported and not self._is_console_on_uart()
+        return DeviceFeature.create(name, supported, enabled)
+
+    # --------------------------------------------------------
+    # SPI
+    # --------------------------------------------------------
+    def build_spi_feature(self, instance: int = 0) -> 'DeviceFeature':
+        name = f"SPI-{instance}"
+        dev_path = f"/dev/spidev0.{instance}"
+
+        supported = os.path.exists(dev_path)
+        enabled = supported and self._is_module_loaded("spidev")
+        return DeviceFeature.create(name, supported, enabled)
+
+    # --------------------------------------------------------
+    # PWM
+    # --------------------------------------------------------
+    def build_pwm_feature(self, instance: int = 0) -> 'DeviceFeature':
+        name = f"PWM-{instance}"
+
+        # Detect if the /sys/class/pwm directory exists
+        pwm_dir = "/sys/class/pwm"
+        supported = os.path.exists(pwm_dir) and any("pwmchip" in d for d in os.listdir(pwm_dir))
+
+        # Enabled if any exported PWM channel is present
+        enabled = supported and any("pwm" in d for d in os.listdir(pwm_dir))
+        return DeviceFeature.create(name, supported, enabled)
+
+    # --------------------------------------------------------
+    # Helper methods
+    # --------------------------------------------------------
+    def _is_module_loaded(self, module: str) -> bool:
+        """Check if a kernel module is loaded."""
+        try:
+            with open("/proc/modules") as f:
+                return any(line.startswith(module) for line in f)
+        except Exception:
+            return False
+
+    def _is_console_on_uart(self) -> bool:
         """
-        Check /boot/config.txt or /boot/firmware/config.txt for enabled overlays.
-        Example: 'dtparam=i2c_arm=on' or 'dtparam=spi=on'
+        Check if the serial console is using the UART (common conflict).
+        On modern Pi OS, 'enable_uart=1' must be in /boot/firmware/config.txt
+        for it to be enabled.
         """
-        possible_files = ["/boot/config.txt", "/boot/firmware/config.txt"]
-        for file_path in possible_files:
-            if not os.path.exists(file_path):
-                continue
-            with open(file_path, "r") as f:
+        try:
+            with open("/boot/firmware/config.txt") as f:
                 for line in f:
-                    if keyword in line and "off" not in line:
-                        return True
+                    if line.strip().startswith("enable_uart"):
+                        return line.strip().endswith("=1")
+        except FileNotFoundError:
+            pass
         return False
-
-    def is_device_present(self, device_hint: str) -> bool:
-        """Check /dev entries for presence of a device."""
-        for entry in os.listdir("/dev"):
-            if device_hint in entry:
-                return True
-        return False
-
-    # --------------------------------------------------------
-    # Feature Builders
-    # --------------------------------------------------------
-
-    def build_i2c_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        is_supported = True
-        is_enabled = (
-            self._is_feature_enabled_in_config("i2c_arm=on") or
-            self._is_device_present("i2c-")
-        )
-        return DeviceFeature.create("I2C", is_supported, is_enabled)
-
-    def build_uart_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        is_supported = True
-        is_enabled = (
-            self._is_feature_enabled_in_config("enable_uart=1") or
-            self._is_device_present("ttyAMA") or
-            self._is_device_present("serial")
-        )
-        return DeviceFeature.create("UART", is_supported, is_enabled)
-
-    def build_spi_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        is_supported = True
-        is_enabled = (
-            self._is_feature_enabled_in_config("spi=on") or
-            self._is_device_present("spidev")
-        )
-        return DeviceFeature.create("SPI", is_supported, is_enabled)
-
-    def build_pwm_feature(self, name:Optional[str] = None) -> 'DeviceFeature':
-        is_supported = True
-        # PWM often requires no explicit config; test /sys/class/pwm
-        is_enabled = os.path.exists("/sys/class/pwm")
-        return DeviceFeature.create("PWM", is_supported, is_enabled)
+    

@@ -10,11 +10,11 @@ class RaspberryPi3(DeviceBase):
 
     def configure_available_pins(self):
 
-        spi_0_feature = self.adapter.build_spi_feature()
-        spi_1_feature = self.adapter.build_spi_feature()
+        spi_0_feature = self.adapter.build_spi_feature(0)
+        spi_1_feature = self.adapter.build_spi_feature(1)
 
-        i2c_0_feature = self.adapter.build_i2c_feature()
-        i2c_1_feature = self.adapter.build_i2c_feature()
+        i2c_0_feature = self.adapter.build_i2c_feature(0)
+        i2c_1_feature = self.adapter.build_i2c_feature(1)
 
         uart_feature = self.adapter.build_uart_feature()
 
