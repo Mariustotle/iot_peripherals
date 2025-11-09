@@ -14,7 +14,7 @@ class DHT22(DigitalTempDriverBase):
     def initialize(self) -> bool:
         try:
             # TODO currently expecting a BCM mapping from the config need to allow for board as well
-            self.sensor = Adafruit_DHT.DHT22
+            self.dht_device = Adafruit_DHT.DHT22
             return True
 
         except Exception as ex:
@@ -30,7 +30,11 @@ class DHT22(DigitalTempDriverBase):
 
             # Give the sensor a small delay before reading (helps stability)
             time.sleep(0.5)
-            (humidity, temperature) = Adafruit_DHT.read_retry(self.sensor, self.gpio_pin)
+            (humidity, temperature) = Adafruit_DHT.read_retry(self.dht_device, self.gpio_pin)
+
+            # Debug info
+            print(f"DHT22 Raw Readings - Temp: {temperature}, Humidity: {humidity}")
+            time.sleep(5)
 
             # Convert temperature if needed
             if temperature is not None and self.config.measurement == TemperatureMeasurement.Fahrenheit:

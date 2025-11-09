@@ -19,4 +19,4 @@ class DigitalTempResponse():
 
         humidity_info = f', Humidity: [{str(self.humidity)}]' if self.humidity is not None else ''
 
-        return f'Temperature: {self.temperature} {UnitType.Celsius if self.measurement == TemperatureMeasurement.Celsius else UnitType.Fahrenheit}{humidity_info}'
+        return f'Temperature: {self.temperature if self.temperature else 'N/A'} {UnitType.Celsius if self.measurement == TemperatureMeasurement.Celsius else UnitType.Fahrenheit}{humidity_info}'
