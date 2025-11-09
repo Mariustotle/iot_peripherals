@@ -11,24 +11,22 @@ from peripherals.devices.adapters.adapter_base import AdapterBase
 class DeviceBase(BoardBase):
     device_type:DeviceType = None
     adapter:AdapterBase = None
-    default_pin_type:PinType = None    
 
     @property
     def device_pins(self) -> Dict[PinPosition, GpioPinDetails]:
         return cast(Dict[PinPosition, GpioPinDetails], self.pins)
-    
+           
     
     def __init__(self, device_type:DeviceType, adapter:AdapterBase, default_pin_type:PinType):
         self.device_type = device_type
-        self.adapter = adapter
-        self.pin_default_type = default_pin_type
-        
+        self.adapter = adapter        
         name = device_type.name
-        super().__init__(name=name)
+
+        super().__init__(name=name, default_pin_type=default_pin_type, default_use_state=False)
 
 
-    def add_gpio_pin(self, pin_details:GpioPinDetails, pin_position:PinPosition, name:Optional[str] = None):
-        super().add_pin(name=name, pin_details=pin_details, pin_position=pin_position)
+    def add_gpio_pin(self, pin_details:GpioPinDetails, pin_position:PinPosition):
+        super().add_pin(pin_details=pin_details, pin_position=pin_position)
 
     def get_gpio_pin(self, pin: int, scheme: PinNumberingScheme) -> tuple[PinPosition, GpioPinDetails] | tuple[None, None]:
         # Ensure you're iterating over .items(), not the function itself

@@ -7,6 +7,9 @@ from peripherals.actuators.relay_switches.driver_base import RelayDriverBase
 from peripherals.contracts.gpio_status import GPIOStatus
 from peripherals.contracts.input_output import InputOutput
 from peripherals.contracts.on_off_status import OnOffStatus
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
+from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.switch_method import SwitchMethod
 
 class JQC3F_05VDC_C(RelayDriverBase):
@@ -94,6 +97,24 @@ class JQC3F_05VDC_C(RelayDriverBase):
             print(f"Oops! {ex.__class__} Unable to intialize [{self.driver_name}]. Details: {ex}")
 
         return False
+    
+    
+    def configure_available_pins(self):
+        
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=1),
+            pin_details=PinDetails.create(type=PinType.Power3V, name='VCC')            
+        )
+
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=2),
+            pin_details=PinDetails.create(type=PinType.Ground, name='GND')            
+        )
+        
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=3),
+            pin_details=PinDetails.create(type=PinType.ANALOG, name='IN')            
+        )
 
 
     def cleanup(self):

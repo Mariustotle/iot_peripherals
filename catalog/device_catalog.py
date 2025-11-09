@@ -95,6 +95,17 @@ class DeviceCatalog:
         existing = next((p for p in self.pin_configurations if p.pin == pin_config.pin and p.scheme == pin_config.scheme), None)
         if existing:
             raise Exception(f"Pin conflict detected for [{pin_config.name}]: Pin [{pin_config.pin}] with scheme [{pin_config.scheme.name}] is already registered as [{existing.name}].")
+        
+        (position, pin_details) = self.device.get_gpio_pin(pin_config.pin, pin_config.scheme)
+
+        if (pin_details is None):
+            raise Exception(f"Pin [{pin_config.pin}] with scheme [{pin_config.scheme.name}] for [{pin_config.name}] is not available on the device.")
+        
+        if pin_details.in_use:
+            raise Exception(f"Pin [{pin_config.pin}] with scheme [{pin_config.scheme.name}] for [{pin_config.name}] is already in use.")
+        
+        # Associate the pin type and mark it as in use
+        self.device.associate_pin(position, pin_config.type)
 
         self.pin_configurations.append(pin_config)
 

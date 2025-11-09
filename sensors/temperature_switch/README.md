@@ -22,15 +22,16 @@
 ```json
 
     "Sensors" : {
-        "DigitalTemperatureSensors" :
-        [
-            {
-                "name": "Office Temp and Humidity",
-                "driver": null,
-                "gpio_pin": 18,
-                "measurement": "Celsius"
-            }
-        ],
+        "TemperatureSwitches" :
+            [
+                {
+                    "name": "Office Temp and Humidity",
+                    "driver": null,
+                    "gpio_out_pin": 16,
+                    "switch_threshold": 25.0,
+                    "measurement": "Celsius"
+                }
+            ],
     }
 
 ```

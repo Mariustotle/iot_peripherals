@@ -13,39 +13,63 @@ class BoardBase(ABC):
     pins:Dict[PinPosition, PinDetails] = None
     parent:Optional['BoardBase'] = None
     associated_pins:Dict[PinPosition, PinAssociation] = None
+    default_use_state:bool = True
+    default_pin_type:Optional[PinType] = None
 
-    def __init__(self, name:str, parent:Optional['BoardBase'] = None):
+    def __init__(self, name:str, parent:Optional['BoardBase'] = None, default_pin_type:Optional[PinType]=None, default_use_state:bool = True):
         self.name = name
         self.pins = {}
         self.associated_pins = {}
         self.parent = parent
+        self.default_use_state = default_use_state
+        self.default_pin_type = default_pin_type
         self.configure_available_pins()
 
     @abstractmethod
     def configure_available_pins(self):
         raise Exception(f'Please override [configure_available_pins] in the base class.')
     
-    def add_pin(self, pin_details:PinDetails, pin_position:PinPosition, name:Optional[str] = None):
+    def add_pin(self, pin_details:PinDetails, pin_position:PinPosition):
         (position, found_pin) = self.get_pin_by_position(horizontal_pos=pin_position.horizontal_position, vertical_pos=pin_position.vertical_position)
 
         if (found_pin):
             raise Exception(f'[board_position=Horizontal{pin_position.horizontal_position}/Vertical={pin_position.vertical_position}] have already been added.')
         
+        if pin_details.in_use is None:
+            pin_details.in_use = self.default_use_state
+        
         self.pins[pin_position] = pin_details
 
 
-    def associate_pin(self, source:'BoardBase', other_position:PinPosition, my_position:PinPosition, type:PinType):
+    def associate_pin(self, my_position:PinPosition, type:PinType):
+
+        if (type == PinType.Default and self.default_pin_type is not None):
+            type = self.default_pin_type
 
         # Find destination pin
         (position, pin_details) = self.get_pin_by_position(horizontal_pos=my_position.horizontal_position, vertical_pos=my_position.vertical_position)
 
+        if pin_details is None:
+            raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as the PIN does not exist on [{self.name}]') 
+
+        if (pin_details.in_use):
+            raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as the PIN is already in use on [{self.name}]')
+        
+        if pin_details.active_pin_type != type:
+            raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as request type [{type.name}] does not match the current PIN type [{pin_details.active_pin_type}]')
+        
+        pin_details.in_use = True
+
+        '''
         if (not pin_details):
             raise Exception(f'Unable to associate PIN [{other_position}] from [{source.name}] to [{self.name}] PIN [{my_position}] as the PIN does not exist on [{self.name}]')
         
         if (pin_details.type != type):
             raise Exception(f'Unable to associate PIN [{other_position}] from [{source.name}] to [{self.name}] PIN [{my_position}] as request type [{type.name}] does not match the current PIN type [{pin_details.type}]')
         
-        self.associated_pins[position] = PinAssociation.create(source=source, other_position=other_position, my_position=position, type=type)
+         self.associated_pins[position] = PinAssociation.create(source=source, other_position=other_position, my_position=position, type=type)
+        '''
+
 
     def get_pin_by_position(self, horizontal_pos:int = 1, vertical_pos:int = 1):
         position  = next((k for k in self.pins if k.horizontal_position == horizontal_pos and k.vertical_position == vertical_pos), None)
