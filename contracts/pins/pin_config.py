@@ -7,7 +7,7 @@ from peripherals.contracts.pins.pin_types import PinType
 class PinConfig(BaseModel):
     pin: int
     name: Optional[str] = None
-    scheme: PinNumberingScheme = PinNumberingScheme.BOARD
+    scheme: PinNumberingScheme = PinNumberingScheme.BCM
     type:Optional[PinType] = PinType.Default
 
     def set_type(self, new_type: PinType) -> None:
