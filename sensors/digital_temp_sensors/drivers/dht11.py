@@ -1,3 +1,6 @@
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
+from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
 from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
 from peripherals.sensors.digital_temp_sensors.response import DigitalTempResponse
@@ -108,3 +111,19 @@ class DHT11(DigitalTempDriverBase):
 
     def cleanup(self):
         GPIO.cleanup()
+
+
+    def configure_available_pins(self):
+        
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=1),
+            pin_details=PinDetails.create(type=PinType.DIGITAL, name="S", description="Digital Data Output")            
+        )
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=2),
+            pin_details=PinDetails.create(type=PinType.Power3V, name="+")
+        )
+        self.add_pin(
+            pin_position=PinPosition.create(horizontal_pos=3),
+            pin_details=PinDetails.create(type=PinType.Ground, name="-")
+        )

@@ -23,13 +23,13 @@ class TDSSimulator(TDSDriverBase):
         
         self.add_pin(
             pin_position=PinPosition.create(horizontal_pos=1),
-            pin_details=PinDetails.create(type=PinType.Ground, in_use=True)            
+            pin_details=PinDetails.create(type=PinType.Ground)            
         )
         self.add_pin(
             pin_position=PinPosition.create(horizontal_pos=2),
-            pin_details=PinDetails.create(type=PinType.ANALOG, in_use=True)            
+            pin_details=PinDetails.create(type=PinType.ANALOG)            
         )
         self.add_pin(
             pin_position=PinPosition.create(horizontal_pos=3),
-            pin_details=PinDetails.create(type=PinType.Power3V, in_use=True)            
+            pin_details=PinDetails.create(type=PinType.Power3V)            
         )
