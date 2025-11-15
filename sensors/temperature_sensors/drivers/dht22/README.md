@@ -1,6 +1,6 @@
 # Digital Temperature Sensor Setup
 
-![Digital Temperature Sensor](https://raw.githubusercontent.com/Mariustotle/universal_iot_hub/refs/heads/main/resources/sensors/digital_temperature_sensor/DHT11_blue.png)
+![Digital Temperature Sensor](https://raw.githubusercontent.com/Mariustotle/universal_iot_hub/refs/heads/main/resources/sensors/digital_temperature_sensor/DHT22_white.png)
 
 ## Overview
 
@@ -12,27 +12,33 @@
 
 Pin functions (DHT11):
 
-- S - Signal / Data
-- VCC - 5V Power
+- [+] - 3.3V Power
+- OUT - GPIO Data Pin
 - [-] - Ground
 
+
+### Special Libraries
+
+```bash
+sudo apt-get install libgpiod2
+pip install adafruit-circuitpython-dht
+pip install adafruit-blinka
+```
 
 ## Configuration
 
 ```json
-
-    "Sensors" : {
-        "DigitalTemperatureSensors" :
-        [
-            {
-                "name": "Server Room Temperature",
-                "driver": null,
-                "gpio_pin": 12,
-                "measurement": "Celsius"
-            }
-        ],
-    }
-
+{
+    "Peripherals": [
+        {
+            "type": "DigitalTemperatureSensor",
+            "name": "Server Room Temperature",
+            "driver": "dht22",
+            "gpio_pin": 26,
+            "measurement": "Celsius"
+        }
+    ]
+}
 ```
 
 

@@ -19,6 +19,6 @@ class ActuatorFactory(PeripheralFactory):
     def get_details(self, config:Any) -> 'FactoryMapping': 
         mapping = self._config_map.get(type(config))
         if not mapping:
-            raise Exception(f"Unsupported actuator config type: {type(config)}")
+            raise Exception(f"Unsupported actuator config type: {type(config.__class__.__name__)}")
         return mapping
 

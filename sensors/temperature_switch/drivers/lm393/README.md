@@ -20,18 +20,16 @@
 ## Configuration
 
 ```json
-
-    "Sensors" : {
-        "TemperatureSwitches" :
-            [
-                {
-                    "name": "Office Temp and Humidity",
-                    "driver": null,
-                    "gpio_out_pin": 16,
-                    "switch_threshold": 25.0,
-                    "measurement": "Celsius"
-                }
-            ],
-    }
-
+{
+    "Peripherals": [
+        {
+            "type": "TemperatureSwitch",
+            "name": "Office Temp and Humidity",
+            "driver": null,
+            "gpio_out_pin": 16,
+            "switch_threshold": 25.0,
+            "measurement": "Celsius"
+        }
+    ]
+}
 ```

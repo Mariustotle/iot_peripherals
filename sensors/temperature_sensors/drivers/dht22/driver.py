@@ -1,25 +1,26 @@
+from typing import Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
-from peripherals.sensors.digital_temp_sensors.response import DigitalTempResponse
+from peripherals.peripheral_type import PeripheralType
+from peripherals.sensors.temperature_sensors.config.digital_config import DigitalTemperatureConfig
+from peripherals.sensors.temperature_sensors.driver_base import TemperatureDriverBase
+from peripherals.sensors.temperature_sensors.response import DigitalTempResponse
 
 import Adafruit_DHT
 import time
 
-class DHT22(DigitalTempDriverBase):
+class DHT22(TemperatureDriverBase):
     dht_device = None
+    gpio_pin = None
 
-    def initialize(self) -> bool:
-        try:
-            # TODO currently expecting a BCM mapping from the config need to allow for board as well
-            self.dht_device = Adafruit_DHT.DHT22
-            return True
+    def _initialize(self, name:str, config:Optional[DigitalTemperatureConfig] = None) -> bool:
+        self.gpio_pin = config.gpio_pin.pin_number if config and config.gpio_pin else None
 
-        except Exception as ex:
-            print(f"Oops! {ex.__class__.__name__} - Unable to initialize [{self.driver_name}]. Details: {ex}")
-            return False
+        # TODO currently expecting a BCM mapping from the config need to allow for board as well
+        self.dht_device = Adafruit_DHT.DHT22
+        return True
 
 
     def _default_reading(self) -> DigitalTempResponse:

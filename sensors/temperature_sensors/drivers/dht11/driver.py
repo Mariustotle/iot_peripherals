@@ -1,27 +1,23 @@
+from typing import Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
-from peripherals.sensors.digital_temp_sensors.response import DigitalTempResponse
+from peripherals.peripheral_type import PeripheralType
+from peripherals.sensors.temperature_sensors.config.digital_config import DigitalTemperatureConfig
+from peripherals.sensors.temperature_sensors.driver_base import TemperatureDriverBase
+from peripherals.sensors.temperature_sensors.response import DigitalTempResponse
 
 import RPi.GPIO as GPIO
 import time
 
 
-class DHT11(DigitalTempDriverBase): 
-        
+class DHT11(TemperatureDriverBase):        
 
-    def initialize(self) -> bool:
-
-        try:
-            GPIO.setmode(GPIO.BCM)
-            return True
-
-        except Exception as ex:
-            print(f"Oops! {ex.__class__} Unable to intialize [{self.driver_name}]. Details: {ex}")
-
-        return False
+    def _initialize(self, name:str, config:Optional[DigitalTemperatureConfig] = None) -> bool:
+        self.gpio_pin = config.gpio_pin.pin_number if config and config.gpio_pin else None
+        GPIO.setmode(GPIO.BCM)
+        return True
     
     def _collect_input(self, pin):
         count = []

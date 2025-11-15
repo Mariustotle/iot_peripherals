@@ -3,12 +3,11 @@ from typing import Any, Dict, Type
 from peripherals.factory_mapping import FactoryMapping
 from peripherals.peripheral_factory import PeripheralFactory
 from peripherals.peripheral_type import PeripheralType
-from peripherals.sensors.digital_i2c_combo_sensor.config import DigitalComboConfig
-from peripherals.sensors.digital_i2c_combo_sensor.digital_combo_drivers import DigitalComboDrivers
-from peripherals.sensors.digital_i2c_combo_sensor.simulator import DigitalComboSimulator
-from peripherals.sensors.digital_temp_sensors.config import DigitalTempConfig
-from peripherals.sensors.digital_temp_sensors.digital_temp_drivers import DigitalTempDrivers
-from peripherals.sensors.digital_temp_sensors.simulator import DigitalTempSimulator
+from peripherals.sensors.temperature_sensors.config.analog_config import AnalogTemperatureConfig
+from peripherals.sensors.temperature_sensors.config.digital_config import DigitalTemperatureConfig
+from peripherals.sensors.temperature_sensors.config.digital_i2c_config import DigitalI2CTemperatureConfig
+from peripherals.sensors.temperature_sensors.temperature_drivers import TemperatureDrivers
+from peripherals.sensors.temperature_sensors.simulator import TemperatureSimulator
 from peripherals.sensors.tds_sensors.config import TDSConfig
 from peripherals.sensors.tds_sensors.simulator import TDSSimulator
 from peripherals.sensors.tds_sensors.tds_drivers import TDSDrivers
@@ -22,10 +21,12 @@ class SensorFactory(PeripheralFactory):
         super().__init__(folder_path='sensors', peripheral_type=PeripheralType.Sensor)
 
     _config_map: Dict[Type[Any], FactoryMapping] = {
-        TDSConfig:              FactoryMapping.create(TDSSimulator,          'tds_sensors',              TDSDrivers),
-        TempSwitchConfig:       FactoryMapping.create(TempSwitchSimulator,   'temperature_switch',       TempSwitchDrivers),
-        DigitalTempConfig:      FactoryMapping.create(DigitalTempSimulator,  'digital_temp_sensors',     DigitalTempDrivers),
-        DigitalComboConfig:     FactoryMapping.create(DigitalComboSimulator, 'digital_i2c_combo_sensor', DigitalComboDrivers),
+        TDSConfig:                      FactoryMapping.create(TDSSimulator,          'tds_sensors',              TDSDrivers),
+        TempSwitchConfig:               FactoryMapping.create(TempSwitchSimulator,   'temperature_switch',       TempSwitchDrivers),
+        AnalogTemperatureConfig:        FactoryMapping.create(TemperatureSimulator,  'temperature_sensors',      TemperatureDrivers),
+        DigitalTemperatureConfig:       FactoryMapping.create(TemperatureSimulator,  'temperature_sensors',      TemperatureDrivers),
+        DigitalI2CTemperatureConfig:    FactoryMapping.create(TemperatureSimulator,  'temperature_sensors',      TemperatureDrivers),
+
     }
 
     def get_details(self, config:Any) -> 'FactoryMapping': 

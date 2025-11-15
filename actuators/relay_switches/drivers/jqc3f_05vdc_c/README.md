@@ -65,19 +65,17 @@ Use Direction Control           | When you have a "Low Voltage Trigger" then you
 
 ```json
 {
-    "Actuators" : {
-        "RelaySwitches" : 
-        [
-            {
-                "name": "Bedroom Light",
-                "driver": "jqc3f_05vdc_c",
-                "default_power_status": "Off",
-                "gpio_pin": 12,
-                "is_low_voltage_trigger": true,
-                "use_direction_control": true
-            }
-        ]
+  "Peripherals": [
+    {
+        "type": "RelaySwitch",
+        "name": "Bedroom Light",
+        "driver": "jqc3f_05vdc_c",
+        "default_power_status": "Off",
+        "gpio_pin": 13,
+        "is_low_voltage_trigger": true,
+        "use_direction_control": true
     }
+  ]
 }
 ```
 

@@ -2,11 +2,11 @@ from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.sensors.digital_temp_sensors.driver_base import DigitalTempDriverBase
+from peripherals.sensors.temperature_sensors.driver_base import TemperatureDriverBase
 
 import random
 
-class DigitalTempSimulator(DigitalTempDriverBase):
+class TemperatureSimulator(TemperatureDriverBase):
 
     def __init__(self, config, simulated = False):
         super().__init__(config, simulated)

@@ -1,10 +1,10 @@
-from pydantic import BaseModel
 from typing import Optional
 from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
+from peripherals.contracts.configuration.config_base import ConfigBase
 from peripherals.contracts.on_off_status import OnOffStatus
 from peripherals.contracts.pins.pin_config import PinConfig
 
-class RelayConfig(BaseModel):
+class RelayConfig(ConfigBase):
     name: str = None
     driver: Optional[RelayDrivers] = None
     default_power_status: OnOffStatus = OnOffStatus.Off

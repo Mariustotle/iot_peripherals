@@ -10,7 +10,8 @@ from peripherals.catalog.catalog_category import CatalogCategory
 from peripherals.communication.i2c_multiplexer.connection import MultiplexerConnection
 from peripherals.communication.i2c_multiplexer.i2c_multiplexer import I2CMultiplexer
 from peripherals.contracts.adapter_type import AdapterType
-from peripherals.contracts.configuration_summary import ConfigurationSummary
+from peripherals.contracts.configuration.config_base import ConfigBase
+from peripherals.contracts.configuration.configuration_summary import ConfigurationSummary
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.devices.device_base import DeviceBase
@@ -109,34 +110,32 @@ class DeviceCatalog:
 
         self.pin_configurations.append(pin_config)
 
-    def _register_peripheral(self, peripheral_type:PeripheralType, configurations:List[Any], factory_type:Any, is_simulated:bool, scan_for_i2c:bool, scan_for_adc:bool) -> None:
+    def _register_peripheral(self, peripheral_type:PeripheralType, config:ConfigBase, factory_type:Any, is_simulated:bool) -> None:
         factory = factory_type()
+        peripheral = factory.create(config, simulate=is_simulated)    
 
-        for config in configurations:            
-            peripheral = factory.create(config, simulate=is_simulated)
+        i2c_config = ObjectScanner.find_single_or_default(config, I2CBase)
+        if i2c_config is not None and i2c_config.multiplexer_details is not None:
+            self.register_i2c_configuration(peripheral.key, i2c_config)
 
-            if scan_for_i2c:
-                i2c_configuration = ObjectScanner.find_single_or_default(config, I2CBase)
-                if i2c_configuration is not None:
-                    self.register_i2c_configuration(peripheral.key, i2c_configuration)
+        adc_config = ObjectScanner.find_single_or_default(config, AnalogBase)
+        if adc_config is not None and adc_config.adc_details is not None:
+            self.register_adc_configuration(peripheral.key, adc_config)
 
-            if scan_for_adc:
-                adc_configuration = ObjectScanner.find_single_or_default(config, AnalogBase)
-                if adc_configuration is not None:
-                    self.register_adc_configuration(peripheral.key, adc_configuration)
+        pin_configurations = ObjectScanner.find_all(config, PinConfig)           
 
-            pin_configurations = ObjectScanner.find_all(config, PinConfig)
+        if (pin_configurations is not None):
             for idx, pin_config in enumerate(pin_configurations):
-                self._register_pin(peripheral.key, idx + 1, pin_config)
+                self._register_pin(peripheral.key, idx + 1, pin_config)              
 
-            if peripheral_type == PeripheralType.Sensor:
-                self.sensors.register(peripheral)
-            elif peripheral_type == PeripheralType.Actuator:
-                self.actuators.register(peripheral)
-            elif peripheral_type == PeripheralType.Communication:
-                self.communication_modules.register(peripheral) 
-            else:
-                raise Exception(f'Unsupported peripheral type: {peripheral_type}')
+        if peripheral_type == PeripheralType.Sensor:
+            self.sensors.register(peripheral)
+        elif peripheral_type == PeripheralType.Actuator:
+            self.actuators.register(peripheral)
+        elif peripheral_type == PeripheralType.Communication:
+            self.communication_modules.register(peripheral) 
+        else:
+            raise Exception(f'Unsupported peripheral type: {peripheral_type}')
 
 
     def __init__(self,
@@ -144,9 +143,7 @@ class DeviceCatalog:
             is_simulated:bool = False,     
             device_type:DeviceType = DeviceType.Unknown,      
             adapter_type:AdapterType = AdapterType.Unknown,
-            sensors_config:Optional[List[Any]] = None,
-            actuators_config:Optional[List[Any]] = None,                 
-            communications_config:Optional[List[Any]] = None   
+            peripherals:List[ConfigBase] = None
         ):
     
         self._lock = RLock()
@@ -161,32 +158,30 @@ class DeviceCatalog:
         self.actuators = CatalogCategory[Actuator]()
         self.communication_modules = CatalogCategory[Communication]()
 
-        if communications_config is not None:
-            self._register_peripheral(
-                peripheral_type=PeripheralType.Communication,                 
-                configurations=communications_config, 
-                factory_type=CommunicationFactory, 
-                is_simulated=is_simulated, 
-                scan_for_i2c=False, 
-                scan_for_adc=False)
-        
-        if sensors_config is not None:
-            self._register_peripheral(
-                peripheral_type=PeripheralType.Sensor,                 
-                configurations=sensors_config, 
-                factory_type=SensorFactory, 
-                is_simulated=is_simulated, 
-                scan_for_i2c=True, 
-                scan_for_adc=False)
+        for peripheral_config in peripherals:
+            if peripheral_config is None:
+                continue
 
-        if actuators_config is not None:
-            self._register_peripheral(
-                peripheral_type=PeripheralType.Actuator,                 
-                configurations=actuators_config, 
-                factory_type=ActuatorFactory, 
-                is_simulated=is_simulated, 
-                scan_for_i2c=True, 
-                scan_for_adc=False)
+            if peripheral_config.peripheral_type == PeripheralType.Communication:
+                self._register_peripheral(
+                    peripheral_type=PeripheralType.Communication,                 
+                    config=peripheral_config, 
+                    factory_type=CommunicationFactory, 
+                    is_simulated=is_simulated) 
+                
+            elif peripheral_config.peripheral_type == PeripheralType.Sensor:
+                self._register_peripheral(
+                    peripheral_type=PeripheralType.Sensor,                 
+                    config=peripheral_config, 
+                    factory_type=SensorFactory, 
+                    is_simulated=is_simulated)
+                
+            elif peripheral_config.peripheral_type == PeripheralType.Actuator:
+                self._register_peripheral(
+                    peripheral_type=PeripheralType.Actuator,                 
+                    config=peripheral_config, 
+                    factory_type=ActuatorFactory, 
+                    is_simulated=is_simulated)
             
         self.validate()
 

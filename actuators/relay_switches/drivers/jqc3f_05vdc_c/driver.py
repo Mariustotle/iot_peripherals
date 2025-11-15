@@ -1,5 +1,5 @@
 
-from typing import Literal
+from typing import Literal, Optional
 import RPi.GPIO as GPIO
 
 from peripherals.actuators.relay_switches.config import RelayConfig
@@ -11,6 +11,7 @@ from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.switch_method import SwitchMethod
+from peripherals.peripheral_type import PeripheralType
 
 class JQC3F_05VDC_C(RelayDriverBase):
     board_type:str = None
@@ -69,34 +70,27 @@ class JQC3F_05VDC_C(RelayDriverBase):
         GPIO.output(self.relay_pin, self.gpio_status)
 
 
-    def initialize(self) -> bool:
+    def _initialize(self, name:str, config:Optional[RelayConfig] = None) -> bool:
 
-        try:
+        GPIO.setmode(GPIO.BCM)   # BCM pin numbering
+        self.board_type = 'BCM'
+        self.relay_pin = config.gpio_pin.pin
 
-            GPIO.setmode(GPIO.BCM)   # BCM pin numbering
-            self.board_type = 'BCM'
-            self.relay_pin = self.config.gpio_pin.pin
+        if (config.use_direction_control and not config.is_low_voltage_trigger):
+            raise Exception('Direction control is only supported for low voltage trigger relays.')
+        
+        self.switch_method = SwitchMethod.Level if not config.use_direction_control else SwitchMethod.Direction
+        self.direction = InputOutput.Output if not config.use_direction_control else self.__get_gpio_direction(config.default_power_status)
+        
+        self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
+        print(f'Initializing {self.name} on GPIO Pin {self.relay_pin} using [{self.switch_method}] method with [{self.gpio_level}] level and [{self.direction}] direction.')
 
-            if (self.config.use_direction_control and not self.config.is_low_voltage_trigger):
-                raise Exception('Direction control is only supported for low voltage trigger relays.')
-            
-            self.switch_method = SwitchMethod.Level if not self.config.use_direction_control else SwitchMethod.Direction
-            self.direction = InputOutput.Output if not self.config.use_direction_control else self.__get_gpio_direction(self.config.default_power_status)
-            
-            self.gpio_level = self.__get_gpio_level(OnOffStatus.Off)
-            print(f'Initializing {self.name} on GPIO Pin {self.relay_pin} using [{self.switch_method}] method with [{self.gpio_level}] level and [{self.direction}] direction.')
+        if (self.switch_method == SwitchMethod.Level):
+            GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.gpio_status)
+        else: 
+            self._set_relay_properties(OnOffStatus.Off)
 
-            if (self.switch_method == SwitchMethod.Level):
-                GPIO.setup(self.relay_pin, GPIO.OUT, initial=self.gpio_status)
-            else: 
-                self._set_relay_properties(OnOffStatus.Off)
-
-            return True
-
-        except Exception as ex:
-            print(f"Oops! {ex.__class__} Unable to intialize [{self.driver_name}]. Details: {ex}")
-
-        return False
+        return True
     
     
     def configure_available_pins(self):

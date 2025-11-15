@@ -26,13 +26,13 @@ class PeripheralFactory(ABC):
         driver = config.driver if config.driver is not None else details.driver_enum.Default
         
         class_name = driver.value.upper()
-        file_name = driver.value.lower()
+        driver_name = driver.value.lower()
         
-        return self.create_driver_instance(config, file_name, class_name, details.peripheral_path)
+        return self.create_driver_instance(config, driver_name, class_name, details.peripheral_path)
 
 
-    def create_driver_instance(self, config:Any, file_name:str, class_name:str, peripheral_path:str) -> 'Any':      
-        module_path = f"peripherals.{self.folder_path}.{peripheral_path}.drivers.{file_name}"
+    def create_driver_instance(self, config:Any, driver_name:str, class_name:str, peripheral_path:str) -> 'Any':      
+        module_path = f"peripherals.{self.folder_path}.{peripheral_path}.drivers.{driver_name}.driver"
 
         try:
             module = importlib.import_module(module_path)

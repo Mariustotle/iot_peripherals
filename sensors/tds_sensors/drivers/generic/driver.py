@@ -3,7 +3,7 @@ import random
 from peripherals.sensors.tds_sensors.driver_base import TDSDriverBase
 
 
-class TDS_METER_V1(TDSDriverBase):
+class GENERIC(TDSDriverBase):
     min_value: int = 150
     max_value: int = 1000
 
