@@ -1,4 +1,3 @@
-
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.gpio_pin_details import GpioPinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
@@ -6,8 +5,7 @@ from peripherals.contracts.pins.pin_types import PinType
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.device_base import DeviceBase
 
-
-class RaspberryPi3(DeviceBase):
+class RaspberryPi4(DeviceBase):
 
     def __init__(self, device_type:DeviceType, adapter:AdapterBase, default_pin_type:PinType):
         super().__init__(device_type=device_type, adapter=adapter, default_pin_type=default_pin_type)
@@ -192,21 +190,3 @@ class RaspberryPi3(DeviceBase):
             pin_position=PinPosition.create(vertical_pos=2, horizontal_pos=20),
             pin_details=GpioPinDetails.create(standard_mode=PinType.Power5V, board_pin=2, name='5V')
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-       
