@@ -22,7 +22,8 @@ Pin functions:
 {
     "Peripherals": [
         {
-            "type": "DigitalTemperatureSensor",
+            "ignore": false,
+            "type": "TDSSensor",
             "name": "Water Particle Meter",
             "driver": null,
             "number_of_readings": 5,
