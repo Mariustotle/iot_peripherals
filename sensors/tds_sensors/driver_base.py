@@ -1,4 +1,7 @@
 from abc import abstractmethod
+from typing import Optional, Dict
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.devices.device_base import DeviceBase
 from peripherals.sensors.sensor import Sensor
 from peripherals.sensors.sensor_type import SensorType
@@ -11,16 +14,11 @@ import time
 
 class TDSDriverBase(Sensor):
     config:TDSConfig = None
-    simulated:bool = None
     
-    def __init__(self, config:TDSConfig, simulated:bool = False):
+    def __init__(self, config:TDSConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         driver = config.driver if config.driver is not None else TDSDrivers.Default
-        driver_name = driver.value if not simulated else 'N/A - Simulated'
 
-        super().__init__(SensorType.TDS, config.name, driver_name, unit_type=UnitType.TDS)
-        
-        self.config = config
-        self.simulated = simulated
+        super().__init__(simulated, SensorType.TDS, config.name, driver.value, unit_type=UnitType.TDS, config=config, pins=pins)
 
         if (not self.validate(config)):
             raise Exception(f'Unable to instanciate communication driver [{self.driver_name}] as the config validation failed.')        

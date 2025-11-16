@@ -1,8 +1,7 @@
-from abc import abstractmethod
+from typing import Optional, Dict
 
-
-from peripherals.contracts.pins.pin_types import PinType
-from peripherals.devices.device_base import DeviceBase
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.sensors.temperature_switch.config import TempSwitchConfig
 from peripherals.sensors.temperature_switch.temp_switch_drivers import TempSwitchDrivers
 from peripherals.sensors.sensor import Sensor
@@ -11,19 +10,14 @@ from peripherals.sensors.unit_type import UnitType
 
 class TempSwitchDriverBase(Sensor):    
     config:TempSwitchConfig = None
-    simulated:bool = None
     gpio_out_pin:int = None
     
-    def __init__(self, config:TempSwitchConfig, simulated:bool = False):
+    def __init__(self, config:TempSwitchConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         driver = config.driver if config.driver is not None else TempSwitchDrivers.Default
-        driver_name = driver.value if not simulated else 'N/A - Simulated'
-
         unit_type = UnitType.Celsius if config.measurement == 'Celsius' else UnitType.Fahrenheit
 
-        super().__init__(SensorType.TemperatureSwitch, config.name, driver_name, unit_type)
+        super().__init__(simulated, SensorType.TemperatureSwitch, config.name, driver.value, unit_type, config=config, pins=pins)
         
-        self.config = config
-        self.simulated = simulated 
         self.gpio_out_pin = config.gpio_out_pin
 
         if (not self.validate(config)):

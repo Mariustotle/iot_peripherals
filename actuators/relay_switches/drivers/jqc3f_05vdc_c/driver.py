@@ -1,5 +1,5 @@
 
-from typing import Literal, Optional
+from typing import Any, Dict, Literal, Optional
 import RPi.GPIO as GPIO
 
 from peripherals.actuators.relay_switches.config import RelayConfig
@@ -91,25 +91,6 @@ class JQC3F_05VDC_C(RelayDriverBase):
             self._set_relay_properties(OnOffStatus.Off)
 
         return True
-    
-    
-    def configure_available_pins(self):
-        
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=1),
-            pin_details=PinDetails.create(type=PinType.Power3V, name='VCC')            
-        )
-
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=2),
-            pin_details=PinDetails.create(type=PinType.Ground, name='GND')            
-        )
-        
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=3),
-            pin_details=PinDetails.create(type=PinType.ANALOG, name='IN')            
-        )
-
 
     def cleanup(self):
         GPIO.cleanup()

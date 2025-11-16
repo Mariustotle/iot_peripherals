@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Optional, Dict
 
 from peripherals.actuators.action_decorator import action
 from peripherals.actuators.actuator import Actuator
@@ -6,22 +7,20 @@ from peripherals.actuators.actuator_types import ActuatorType
 from peripherals.actuators.relay_switches.config import RelayConfig
 from peripherals.actuators.relay_switches.relay_drivers import RelayDrivers
 from peripherals.contracts.on_off_status import OnOffStatus
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 
 class RelayDriverBase(Actuator):    
     config:RelayConfig = None
-    simulated:bool = None
     relay_pin:int = None
     relay_status:OnOffStatus = None         # The on/off status of the relay
     power_status:OnOffStatus = None         # Whether the power is on (based on relay status and default state)
     
-    def __init__(self, config:RelayConfig, simulated:bool = False):
+    def __init__(self, config:RelayConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         driver = config.driver if config.driver is not None else RelayDrivers.Default
-        driver_name = driver.value if not simulated else 'N/A - Simulated'
 
-        super().__init__(ActuatorType.Relay, config.name, driver_name, status=config.default_power_status)
-        
-        self.config = config
-        self.simulated = simulated 
+        super().__init__(simulated, ActuatorType.Relay, config.name, driver.value, status=config.default_power_status, config=config, pins=pins)
+
         self.relay_pin = config.gpio_pin.pin
 
         self.relay_status = OnOffStatus.Off

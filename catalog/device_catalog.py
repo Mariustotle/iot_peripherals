@@ -112,7 +112,7 @@ class DeviceCatalog:
 
     def _register_peripheral(self, peripheral_type:PeripheralType, config:ConfigBase, factory_type:Any, is_simulated:bool) -> None:
         factory = factory_type()
-        peripheral = factory.create(config, simulate=is_simulated)    
+        peripheral = factory.create(config, simulate=is_simulated)
 
         i2c_config = ObjectScanner.find_single_or_default(config, I2CBase)
         if i2c_config is not None and i2c_config.multiplexer_details is not None:

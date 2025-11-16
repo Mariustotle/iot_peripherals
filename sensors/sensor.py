@@ -1,5 +1,7 @@
 
 from abc import abstractmethod
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.sensors.read_decorator import read
 from peripherals.sensors.read_decorator  import ReadAction, derive_params_from_signature
 from peripherals.peripheral import Peripheral
@@ -7,7 +9,7 @@ from peripherals.peripheral_type import PeripheralType
 from peripherals.sensors.sensor_reading import SensorReading
 from peripherals.sensors.sensor_type import SensorType
 from peripherals.sensors.unit_type import UnitType
-from typing import Any, Optional, TypeVar
+from typing import Any, Dict, Optional, TypeVar
 from datetime import datetime
 
 import inspect
@@ -16,16 +18,16 @@ T = TypeVar('T')
 
 class Sensor(Peripheral):
     sensor_type: SensorType = None
-    unit_type: UnitType = None
-    driver_name:str = None
+    driver_name: str = None
+    unit_type: UnitType = None    
     last_value: Optional[SensorReading[T]] = None
     last_read_time: Optional[datetime] = None
     
-    def __init__(self, sensor_type:SensorType, name:str, driver_name:str, unit_type:UnitType = UnitType.Unkown, config:Optional[Any] = None):        
-        super().__init__(PeripheralType.Sensor, name, config=config)
+    def __init__(self, simulated:bool, sensor_type:SensorType, name:str, driver_name:str, unit_type:UnitType = UnitType.Unkown, config:Optional[Any] = None, pins:Optional[Dict[PinPosition, PinDetails]] = None):        
+        super().__init__(simulated, PeripheralType.Sensor, name, config=config, pins=pins)
 
         self.sensor_type = sensor_type
-        self.driver_name = driver_name
+        self.driver_name = driver_name if not simulated else f'Simulated (*{driver_name}*)'
         self.unit_type = unit_type
         self._reads: list[ReadAction] = []
         self._autowire_actions()  # <-- reflect & register

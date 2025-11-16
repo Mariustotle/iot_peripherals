@@ -1,3 +1,4 @@
+from typing import Dict, Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
@@ -8,8 +9,8 @@ import random
 
 class TemperatureSimulator(TemperatureDriverBase):
 
-    def __init__(self, config, simulated = False):
-        super().__init__(config, simulated)
+    def __init__(self, config, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        super().__init__(config, True, pins=pins)
 
     def _default_reading(self) -> float:
 
@@ -21,20 +22,3 @@ class TemperatureSimulator(TemperatureDriverBase):
         elif self.unit == "Fahrenheit":
             # Equivalent in Fahrenheit (65°F to 79°F)
             return round(random.uniform(65.0, 79.0), 2)
-        
-        
-
-    def configure_available_pins(self):
-        
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=1),
-            pin_details=PinDetails.create(type=PinType.Power3V, name="+")            
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=2),
-            pin_details=PinDetails.create(type=PinType.DIGITAL, name="OUT", description="Digital Data Output")            
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=3),
-            pin_details=PinDetails.create(type=PinType.Ground, name="-")            
-        )

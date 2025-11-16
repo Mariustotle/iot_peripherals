@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
@@ -44,23 +44,3 @@ class AHT10(TemperatureDriverBase):
 
     def cleanup(self):
         pass
-
-
-    def configure_available_pins(self):
-        
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=1),
-            pin_details=PinDetails.create(type=PinType.Power3V, name="VIN")            
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=2),
-            pin_details=PinDetails.create(type=PinType.Ground, name="GND")
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=3),
-            pin_details=PinDetails.create(type=PinType.I2C_SCL, name="SCL")
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=4),
-            pin_details=PinDetails.create(type=PinType.I2C_SDA, name="SDA")
-        )

@@ -19,27 +19,43 @@ class PeripheralFactory(ABC):
     def create(self, config:Any, simulate:bool = False) -> 'Any':
         
         details = self.get_details(config)
-
-        if (simulate):
-            return details.simulator_class(config, True)
-        
         driver = config.driver if config.driver is not None else details.driver_enum.Default
         
         class_name = driver.value.upper()
         driver_name = driver.value.lower()
+
+        pin_layout_class = self.get_pin_layout_class('PinLayout', driver_name, details.peripheral_path)
+
+        if (simulate):
+            actual_driver_pins = pin_layout_class.get_pin_layout()
+            return details.simulator_class(config, actual_driver_pins)
         
-        return self.create_driver_instance(config, driver_name, class_name, details.peripheral_path)
+        driver_class = self.get_driver_class(class_name, driver_name, details.peripheral_path)
+        
+        return driver_class(config, False, )
 
 
-    def create_driver_instance(self, config:Any, driver_name:str, class_name:str, peripheral_path:str) -> 'Any':      
-        module_path = f"peripherals.{self.folder_path}.{peripheral_path}.drivers.{driver_name}.driver"
-
+    def get_driver_class(self, class_name:str, driver_name:str, peripheral_path:str):
+        
         try:
+            module_path = f"peripherals.{self.folder_path}.{peripheral_path}.drivers.{driver_name}.driver"
             module = importlib.import_module(module_path)
             driver_class = getattr(module, class_name)
+
+            return driver_class
 
         except (ModuleNotFoundError, AttributeError) as e:
             raise ImportError(f"Could not load driver '{class_name}' Path [{module_path}]: {e}")
 
-        return driver_class(config, False)
        
+    def get_pin_layout_class(self, class_name:str, driver_name:str, peripheral_path:str):
+        
+        try:
+            module_path = f"peripherals.{self.folder_path}.{peripheral_path}.drivers.{driver_name}.pin_layout"
+            module = importlib.import_module(module_path)
+            driver_class = getattr(module, class_name)
+
+            return driver_class
+
+        except (ModuleNotFoundError, AttributeError) as e:
+            raise ImportError(f"Could not load driver '{class_name}' Path [{module_path}]: {e}")

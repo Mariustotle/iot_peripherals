@@ -1,9 +1,11 @@
 from peripherals.actuators.action_decorator import ActuatorAction
 from peripherals.actuators.actuator_types import ActuatorType
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.peripheral import Peripheral
 from peripherals.peripheral_type import PeripheralType
 from peripherals.actuators.action_decorator  import ActuatorAction, derive_params_from_signature
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 
 import inspect
@@ -13,12 +15,12 @@ class Actuator(Peripheral):
     driver_name:str = None
     status: Optional[Any] = None
     
-    def __init__(self, actuator_type:ActuatorType, name:str, driver_name:str, status:Optional[Any] = None):        
-        super().__init__(PeripheralType.Actuator, name)
+    def __init__(self, simulated:bool, actuator_type:ActuatorType, name:str, driver_name:str, status:Optional[Any] = None, config:Optional[Any] = None, pins:Optional[Dict[PinPosition, PinDetails]] = None):        
+        super().__init__(simulated=simulated, peripheral_type=PeripheralType.Actuator, name=name, config=config, pins=pins)
 
-        self.status = status
+        self.status = status        
+        self.driver_name = driver_name if not simulated else f'Simulated (*{driver_name}*)'
         self.actuator_type = actuator_type
-        self.driver_name = driver_name
         self._actions: list[ActuatorAction] = []
         self._autowire_actions()  # <-- reflect & register
 

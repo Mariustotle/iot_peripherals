@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.peripheral_type import PeripheralType
+from peripherals.devices.device_base import DeviceBase
 from peripherals.sensors.temperature_sensors.config.digital_config import DigitalTemperatureConfig
 from peripherals.sensors.temperature_sensors.driver_base import TemperatureDriverBase
 from peripherals.sensors.temperature_sensors.response import DigitalTempResponse
@@ -14,6 +14,9 @@ import time
 class DHT22(TemperatureDriverBase):
     dht_device = None
     gpio_pin = None
+
+    def __init__(self, config:DigitalTemperatureConfig, device:DeviceBase, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        super().__init__(config, device, simulated, pins)
 
     def _initialize(self, name:str, config:Optional[DigitalTemperatureConfig] = None) -> bool:
         self.gpio_pin = config.gpio_pin.pin_number if config and config.gpio_pin else None
@@ -63,19 +66,4 @@ class DHT22(TemperatureDriverBase):
                 measurement=self.config.measurement,
                 humidity=None
             )
-
-
-    def configure_available_pins(self):
         
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=1),
-            pin_details=PinDetails.create(type=PinType.Power3V, name="+")            
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=2),
-            pin_details=PinDetails.create(type=PinType.DIGITAL, name="OUT", description="Digital Data Output")            
-        )
-        self.add_pin(
-            pin_position=PinPosition.create(horizontal_pos=3),
-            pin_details=PinDetails.create(type=PinType.Ground, name="-")            
-        )

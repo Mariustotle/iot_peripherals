@@ -1,21 +1,27 @@
 from abc import abstractmethod
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 from common.environment import Env
 from peripherals.contracts.board.board_base import BoardBase
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.peripheral_type import PeripheralType
 
 class Peripheral(BoardBase):
     peripheral_type: PeripheralType = None
     config:Any = None
+    simulated:bool = None
+    driver_name:str = None
     
     @property
     def key(self) -> str:
         return f'{self.peripheral_type.value}-{self.name}'
     
-    def __init__(self, peripheral_type:PeripheralType, name:str, parent:Optional['BoardBase'] = None, config:Any = None):
+    def __init__(self, simulated:bool, peripheral_type:PeripheralType, name:str, parent:Optional['BoardBase'] = None, config:Any = None, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         self.peripheral_type = peripheral_type
         self.config = config
-        super().__init__(name=name, parent=parent)
+        self.simulated = simulated
+
+        super().__init__(name=name, parent=parent, pins=pins)
 
     @abstractmethod
     def get_description(self) -> str: pass

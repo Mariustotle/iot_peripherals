@@ -1,6 +1,6 @@
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from peripherals.contracts.board.pin_association import PinAssociation
 from peripherals.contracts.pins.pin_details import PinDetails
@@ -16,19 +16,20 @@ class BoardBase(ABC):
     default_use_state:bool = True
     default_pin_type:Optional[PinType] = None
 
-    def __init__(self, name:str, parent:Optional['BoardBase'] = None, default_pin_type:Optional[PinType]=None, default_use_state:bool = True):
+    def __init__(self, name:str, parent:Optional['BoardBase'] = None, default_pin_type:Optional[PinType]=None, default_use_state:bool = True, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         self.name = name
         self.pins = {}
         self.associated_pins = {}
         self.parent = parent
         self.default_use_state = default_use_state
         self.default_pin_type = default_pin_type
-        self.configure_available_pins()
 
-    @abstractmethod
-    def configure_available_pins(self):
-        raise Exception(f'Please override [configure_available_pins] in the base class.')
-    
+        self._configure_pins(pins)
+       
+    def _configure_pins(self, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        for position, details in pins.items():
+            self.add_pin(pin_position=position, pin_details=details)
+   
     def add_pin(self, pin_details:PinDetails, pin_position:PinPosition):
         (position, found_pin) = self.get_pin_by_position(horizontal_pos=pin_position.horizontal_position, vertical_pos=pin_position.vertical_position)
 
