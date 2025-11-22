@@ -1,5 +1,8 @@
-from typing import Optional
+from typing import Dict, Optional
 from time import sleep
+from peripherals.contracts.pins.pin_details import PinDetails
+from peripherals.contracts.pins.pin_position import PinPosition
+from peripherals.devices.device_base import DeviceBase
 import smbus2
 
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
@@ -15,13 +18,19 @@ class AHT10(TemperatureDriverBase):
         - Humidity:     RH = (S_rh / 2^20) * 100
         - Temperature:  T = ((S_t / 2^20) * 200) - 50
     """
-    DEFAULT_I2C_ADDR = 0x38
+    DEFAULT_I2C_ADDR:int = 0x38 # 0x38 = 56 in hex notation
+    DEFAULT_BUS_NUMBER:int = 1
 
-    def __init__(self):
-        super().__init__()
+    i2c_addr:int = None
+    i2c_bus_number:int = None
+    bus: Optional[smbus2.SMBus] = None    
+
+
+    def __init__(self, config:DigitalI2CTemperatureConfig, device:DeviceBase, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        super().__init__(config, device, simulated, pins)
         self.bus: Optional[smbus2.SMBus] = None
-        self.i2c_addr = self.DEFAULT_I2C_ADDR
-        self.i2c_bus_number = 1  # Default for Raspberry Pi 3/4/5
+        self.i2c_addr = config.i2c_address if config.i2c_address else self.DEFAULT_I2C_ADDR
+        self.i2c_bus_number = config.channel if config.channel else self.DEFAULT_BUS_NUMBER      
 
         self.initialized = False
 
@@ -30,14 +39,6 @@ class AHT10(TemperatureDriverBase):
     # INITIALIZATION
     # ----------------------------------------------------------
     def _initialize(self, name: str, config: Optional[DigitalI2CTemperatureConfig] = None) -> bool:
-
-        # I2C BUS SELECTION (YOUR ADAPTER MAY OVERRIDE THIS)
-        if config and config.i2c_bus is not None:
-            self.i2c_bus_number = config.i2c_bus
-
-        # Address from config (if overridden)
-        if config and config.i2c_address:
-            self.i2c_addr = config.i2c_address
 
         # Open bus
         try:
