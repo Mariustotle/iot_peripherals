@@ -27,6 +27,10 @@ class BoardBase(ABC):
         self._configure_pins(pins)
        
     def _configure_pins(self, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        if pins is None or len(pins) == 0:
+            # No pins to configure
+            return
+
         for position, details in pins.items():
             self.add_pin(pin_position=position, pin_details=details)
    
