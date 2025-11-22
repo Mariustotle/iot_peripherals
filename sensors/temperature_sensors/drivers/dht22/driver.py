@@ -1,9 +1,7 @@
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
-from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
-from peripherals.devices.device_base import DeviceBase
 from peripherals.sensors.temperature_sensors.config.digital_config import DigitalTemperatureConfig
 from peripherals.sensors.temperature_sensors.driver_base import TemperatureDriverBase
 from peripherals.sensors.temperature_sensors.response import DigitalTempResponse
@@ -15,8 +13,8 @@ class DHT22(TemperatureDriverBase):
     dht_device = None
     gpio_pin = None
 
-    def __init__(self, config:DigitalTemperatureConfig, device:DeviceBase, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
-        super().__init__(config, device, simulated, pins)
+    def __init__(self, config:DigitalTemperatureConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        super().__init__(config, simulated, pins)
 
     def _initialize(self, name:str, config:Optional[DigitalTemperatureConfig] = None) -> bool:
         self.gpio_pin = config.gpio_pin.pin_number if config and config.gpio_pin else None

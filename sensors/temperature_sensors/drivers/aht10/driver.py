@@ -2,7 +2,6 @@ from typing import Dict, Optional
 from time import sleep
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_position import PinPosition
-from peripherals.devices.device_base import DeviceBase
 import smbus2
 
 from peripherals.contracts.temperature_measurement import TemperatureMeasurement
@@ -26,8 +25,8 @@ class AHT10(TemperatureDriverBase):
     bus: Optional[smbus2.SMBus] = None    
 
 
-    def __init__(self, config:DigitalI2CTemperatureConfig, device:DeviceBase, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
-        super().__init__(config, device, simulated, pins)
+    def __init__(self, config:DigitalI2CTemperatureConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
+        super().__init__(config, simulated, pins)
         self.bus: Optional[smbus2.SMBus] = None
         self.i2c_addr = config.i2c_address if config.i2c_address else self.DEFAULT_I2C_ADDR
         self.i2c_bus_number = config.channel if config.channel else self.DEFAULT_BUS_NUMBER      
