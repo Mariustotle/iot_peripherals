@@ -22,9 +22,11 @@ Pin functions (AHT10):
 ```json
 {
     "Peripherals": [
+        /* Example of configuration using I2C on the main board */
         {
             "type": "DigitalI2CTemperatureSensor",
             "name": "Outside Braai Area Temperature",
+            "channel": 1,
             "driver": "aht10",
             "gpio_pin_sda": 0,
             "gpio_pin_scl": 1,
