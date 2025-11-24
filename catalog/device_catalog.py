@@ -105,8 +105,8 @@ class DeviceCatalog:
         if pin_details.in_use:
             raise Exception(f"Pin [{pin_config.pin}] with scheme [{pin_config.scheme.name}] for [{pin_config.name}] is already in use.")
         
-        # Associate the pin type and mark it as in use
-        self.device.associate_pin(position, pin_config.type)
+        #TODO: Move this to device pin configuration - The type must be set by the driver pin registration not the config
+        self.device.associate_pin(position, None)
 
         self.pin_configurations.append(pin_config)
 
@@ -117,6 +117,8 @@ class DeviceCatalog:
         i2c_config = ObjectScanner.find_single_or_default(config, I2CBase)
         if i2c_config is not None and i2c_config.multiplexer_details is not None:
             self.register_i2c_configuration(peripheral.key, i2c_config)
+        elif i2c_config is not None: # Onboard i2c
+            self.device.validate_i2c_pins(i2c_config.name, i2c_config.channel, i2c_config.i2c_address.value, i2c_config.gpio_pin_sda, i2c_config.gpio_pin_scl)
 
         adc_config = ObjectScanner.find_single_or_default(config, AnalogBase)
         if adc_config is not None and adc_config.adc_details is not None:

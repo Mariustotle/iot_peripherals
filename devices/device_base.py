@@ -3,6 +3,7 @@ from typing import List, cast, Dict, Optional
 from peripherals.contracts.board.board_base import BoardBase
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.gpio_pin_details import GpioPinDetails
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.contracts.pins.pin_details import PinDetails
 from peripherals.contracts.pins.pin_numbering_scheme import PinNumberingScheme
 from peripherals.contracts.pins.pin_position import PinPosition
@@ -50,3 +51,14 @@ class DeviceBase(BoardBase):
 
         return (None, None) if not found_key else (found_key, self.device_pins[found_key])
 
+
+    def validate_i2c_pins(
+                self,
+                name: str,
+                channel: int,
+                i2c_address: int,
+                sda_config: PinConfig,
+                scl_config: PinConfig
+            ) -> bool:
+        
+        return True

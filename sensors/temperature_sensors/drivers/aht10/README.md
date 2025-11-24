@@ -28,8 +28,8 @@ Pin functions (AHT10):
             "name": "Outside Braai Area Temperature",
             "channel": 1,
             "driver": "aht10",
-            "gpio_pin_sda": 0,
-            "gpio_pin_scl": 1,
+            "gpio_pin_sda": 2,
+            "gpio_pin_scl": 3,
             "measurement": "Celsius"
         }
     ]

@@ -4,7 +4,7 @@ from peripherals.contracts.pins.pin_types import PinType
 from peripherals.contracts.simulator.simulator_config import SimulatorConfig
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.adapters.adapter_simulator import AdapterSimulator
-from peripherals.devices.adapters.raspberry_os_trixy_adapter import RaspberryOSTrixyAdapter
+
 from peripherals.devices.device_base import DeviceBase
 from peripherals.devices.raspberry_pi_3 import RaspberryPi3
 from peripherals.devices.raspberry_pi_4 import RaspberryPi4
@@ -18,6 +18,7 @@ class DeviceFactory:
             return AdapterSimulator(adapter_type, config=sim_config)
         
         if (adapter_type == AdapterType.RaspberryOSTrixy):
+            from peripherals.devices.adapters.raspberry_os_trixy_adapter import RaspberryOSTrixyAdapter
             return RaspberryOSTrixyAdapter(adapter_type)
         
         else:

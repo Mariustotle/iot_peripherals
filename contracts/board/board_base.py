@@ -46,10 +46,7 @@ class BoardBase(ABC):
         self.pins[pin_position] = pin_details
 
 
-    def associate_pin(self, my_position:PinPosition, type:PinType):
-
-        if (type == PinType.Default and self.default_pin_type is not None):
-            type = self.default_pin_type
+    def associate_pin(self, my_position:PinPosition, type:Optional[PinType] = None):
 
         # Find destination pin
         (position, pin_details) = self.get_pin_by_position(horizontal_pos=my_position.horizontal_position, vertical_pos=my_position.vertical_position)
@@ -59,10 +56,14 @@ class BoardBase(ABC):
 
         if (pin_details.in_use):
             raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as the PIN is already in use on [{self.name}]')
-        
-        if pin_details.active_pin_type != type:
-            raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as request type [{type.name}] does not match the current PIN type [{pin_details.active_pin_type}]')
-        
+
+        if type is not None:
+            if (type == PinType.Default and self.default_pin_type is not None):
+                type = self.default_pin_type
+
+            if pin_details.active_pin_type != type:
+                raise Exception(f'Unable to associate PIN [{my_position}] on [{self.name}] as request type [{type.name}] does not match the current PIN type [{pin_details.active_pin_type}]')
+            
         pin_details.in_use = True
 
         '''

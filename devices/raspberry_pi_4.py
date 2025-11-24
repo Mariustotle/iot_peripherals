@@ -1,6 +1,7 @@
 from typing import Dict
 from peripherals.contracts.device_type import DeviceType
 from peripherals.contracts.pins.gpio_pin_details import GpioPinDetails
+from peripherals.contracts.pins.pin_config import PinConfig
 from peripherals.contracts.pins.pin_position import PinPosition
 from peripherals.contracts.pins.pin_types import PinType
 from peripherals.devices.adapters.adapter_base import AdapterBase
@@ -68,3 +69,100 @@ class RaspberryPi4(DeviceBase):
         }
 
         return pin_list
+
+
+    def validate_i2c_pins(
+            self,
+            name: str,
+            channel: int,
+            i2c_address: int,
+            sda_config: PinConfig,
+            scl_config: PinConfig
+        ) -> bool:      
+
+        (sda_position, sda_pin_details) = self.get_gpio_pin(sda_config.pin, sda_config.scheme)
+        (scl_position, scl_pin_details) = self.get_gpio_pin(scl_config.pin, scl_config.scheme)
+
+        debug = []
+        errors = []
+
+        debug.append(f"Validating I2C for [{name}]")
+        debug.append(f"  • I2C Bus Number   : {channel}")
+        debug.append(f"  • I2C Address      : 0x{i2c_address:02X} ({i2c_address})")
+        debug.append(
+            f"  • I2C SDA PIN      : Pos [H{sda_position.horizontal_position}/V{sda_position.vertical_position}] "
+            f"| GPIO={sda_pin_details.gpio_pin} | Type={sda_pin_details.active_pin_type}"
+        )
+        debug.append(
+            f"  • I2C SCL PIN      : Pos [H{scl_position.horizontal_position}/V{scl_position.vertical_position}] "
+            f"| GPIO={scl_pin_details.gpio_pin} | Type={scl_pin_details.active_pin_type}"
+        )
+
+        # ------------------------------------------------------------
+        # 1. Validate I2C channel
+        # ------------------------------------------------------------
+        VALID_I2C_BUSES = {1}  # Raspberry Pi 3 & 4 default
+        if channel not in VALID_I2C_BUSES:
+            errors.append(
+                f"  ✖ ERROR: Invalid I2C bus {channel}. Raspberry Pi 3/4 only supports external sensors on I2C bus 1 (0 is for hats)."
+            )
+
+        # ------------------------------------------------------------
+        # 2. Validate I2C address range (7-bit)
+        # ------------------------------------------------------------
+        if not (0x03 <= i2c_address <= 0x77):
+            errors.append(
+                f"  ✖ ERROR: Invalid I2C address 0x{i2c_address:02X}. Valid range: 0x03–0x77."
+            )
+
+        # ------------------------------------------------------------
+        # 3. Validate pin types (your framework)
+        # ------------------------------------------------------------
+        if sda_pin_details.active_pin_type is not PinType.I2C_SDA:
+            errors.append(
+                f"  ✖ ERROR: SDA pin configured at [V={sda_position.vertical_position}/H{sda_position.horizontal_position}] "
+                f"is {sda_pin_details.active_pin_type}, expected I2C_SDA."
+            )
+
+        if scl_pin_details.active_pin_type is not PinType.I2C_SCL:
+            errors.append(
+                f"  ✖ ERROR: SCL pin configured at [V{scl_position.vertical_position}/H{scl_position.horizontal_position}] "
+                f"is {scl_pin_details.active_pin_type}, expected I2C_SCL."
+            )
+
+        # ------------------------------------------------------------
+        # 4. Validate correct GPIO pins for Raspberry Pi 3/4
+        # ------------------------------------------------------------
+        REQUIRED_SDA_BCM = 2   # GPIO 2 (Pin 3)
+        REQUIRED_SCL_BCM = 3   # GPIO 3 (Pin 5)
+
+        if sda_pin_details.gpio_pin != REQUIRED_SDA_BCM:
+            errors.append(
+                f"  ✖ ERROR: SDA must be GPIO2 (pin 3). You configured GPIO{sda_pin_details.gpio_pin}."
+            )
+
+        if scl_pin_details.gpio_pin != REQUIRED_SCL_BCM:
+            errors.append(
+                f"  ✖ ERROR: SCL must be GPIO3 (pin 5). You configured GPIO{scl_pin_details.gpio_pin}."
+            )
+
+        # ------------------------------------------------------------
+        # 5. Test communication to the I2C Bus
+        # ------------------------------------------------------------
+
+        if (len(errors) == 0):
+            (debug_adapter, errors_adapter) = self.adapter.validate_i2c(name, channel, i2c_address)
+            debug.extend(debug_adapter)
+            errors.extend(errors_adapter)
+        
+
+        # ------------------------------------------------------------
+        # FINAL >> Throw exception if there are any errors
+        # ------------------------------------------------------------
+        if errors and len(errors) > 0:
+            raise RuntimeError("\n".join(debug + errors))
+
+        # ------------------------------------------------------------
+        # Return
+        # ------------------------------------------------------------  
+        return True

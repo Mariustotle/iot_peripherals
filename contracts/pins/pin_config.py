@@ -8,10 +8,14 @@ class PinConfig(BaseModel):
     pin: int
     name: Optional[str] = None
     scheme: PinNumberingScheme = PinNumberingScheme.BCM
+
+    '''
     type:Optional[PinType] = PinType.Default
 
     def set_type(self, new_type: PinType) -> None:
-        self.type = new_type
+        self.type = new_type 
+    
+    '''
 
     def __str__(self):
         return f'{self.name} (Device Pin {self.pin} - {self.scheme.name})'

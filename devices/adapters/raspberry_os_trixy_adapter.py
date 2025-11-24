@@ -1,9 +1,10 @@
-
-
-import os
+from typing import List, Tuple
 from peripherals.contracts.adapter_type import AdapterType
 from peripherals.devices.adapters.adapter_base import AdapterBase
 from peripherals.devices.device_feature import DeviceFeature
+
+import os
+import smbus2
 
 class RaspberryOSTrixyAdapter(AdapterBase):
     """
@@ -90,3 +91,74 @@ class RaspberryOSTrixyAdapter(AdapterBase):
             pass
         return False
     
+
+    def validate_i2c(self, name: str, channel: int, i2c_address: int) -> Tuple[List[str], List[str]]:
+        debug = []
+        errors = []
+
+        debug.append(f"Adapter-level I2C validation for [{name}]")
+        debug.append(f"  • Channel        : {channel}")
+        debug.append(f"  • I2C Address    : 0x{i2c_address:02X} ({i2c_address})")
+
+        # --------------------------------------------------------
+        # 1. Check if device file /dev/i2c-X exists
+        # --------------------------------------------------------
+        bus_path = f"/dev/i2c-{channel}"
+        if not os.path.exists(bus_path):
+            errors.append(f"  ✖ ERROR: I2C bus device '{bus_path}' does NOT exist.")
+            errors.append("     → I2C disabled, wrong bus, or dtoverlay misconfigured.")
+            return debug, errors
+
+        # --------------------------------------------------------
+        # 2. Attempt to open the bus
+        # --------------------------------------------------------
+        try:
+            bus = smbus2.SMBus(channel)
+            debug.append("  ✔ Opened I2C bus successfully")
+        except Exception as ex:
+            errors.append("  ✖ ERROR: Failed to open I2C bus.")
+            errors.append(f"     System error: {ex}")
+            return debug, errors
+
+        # --------------------------------------------------------
+        # 3. Test connectivity to the I2C address
+        # --------------------------------------------------------
+        try:
+            # This performs an actual read attempt and checks for an ACK.
+            # Nearly all I2C sensors will respond to reading register 0x00.
+            bus.read_byte(i2c_address)
+            debug.append(f"  ✔ Device at 0x{i2c_address:02X} responded (ACK received).")
+
+        except OSError as ex:
+            errno_val = ex.errno
+
+            if errno_val == 121:  # Remote I/O error (no ACK)
+                errors.append(f"  ✖ ERROR: Device at 0x{i2c_address:02X} did NOT respond (no ACK).")
+                errors.append("     → Most common causes:")
+                errors.append("       • Wrong SDA/SCL pins")
+                errors.append("       • Wrong I2C address")
+                errors.append("       • Sensor not powered")
+                errors.append("       • Faulty jumper wire")
+                errors.append(f"     System error: {ex}")
+
+            elif errno_val == 5:  # I/O error (bus physically unusable)
+                errors.append(f"  ✖ ERROR: Severe I/O error talking to device at 0x{i2c_address:02X}.")
+                errors.append("     → SDA/SCL likely shorted, reversed, or floating.")
+                errors.append("       This error means the hardware lines failed electrically.")
+                errors.append(f"     System error: {ex}")
+
+            else:
+                errors.append(f"  ✖ ERROR: Unknown I2C communication failure for device 0x{i2c_address:02X}.")
+                errors.append(f"     System error: {ex}")
+
+        except Exception as ex:
+            errors.append(f"  ✖ ERROR: Unexpected failure testing device at 0x{i2c_address:02X}.")
+            errors.append(f"     System error: {ex}")
+
+        # Clean up bus handle
+        try:
+            bus.close()
+        except:
+            pass
+
+        return debug, errors

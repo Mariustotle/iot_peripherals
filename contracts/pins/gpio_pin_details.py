@@ -13,7 +13,13 @@ class GpioPinDetails(PinDetails):
 
     @property
     def active_pin_type(self):
-        return self.special_mode if self.multi_function and self.feature and self.feature.enabled else self.type
+        return self.special_mode if self.multi_function and self.feature and self.feature.enabled else self.standard_mode
+
+    @property
+    def inactive_pin_type(self):
+        if self.special_mode is None:
+            return None        
+        return self.standard_mode if self.multi_function and self.feature and self.feature.enabled else self.special_mode
 
     @property
     def standard_mode(self) -> PinType:

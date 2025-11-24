@@ -28,7 +28,7 @@ class AHT10(TemperatureDriverBase):
     def __init__(self, config:DigitalI2CTemperatureConfig, simulated:bool = False, pins:Optional[Dict[PinPosition, PinDetails]] = None):
         super().__init__(config, simulated, pins)
         self.bus: Optional[smbus2.SMBus] = None
-        self.i2c_addr = config.i2c_address.value if config.i2c_address else self.DEFAULT_I2C_ADDR
+        self.i2c_addr = config.i2c_address.value if config.i2c_address and config.i2c_address != 0 else self.DEFAULT_I2C_ADDR
         self.i2c_bus_number = config.channel if config.channel else self.DEFAULT_BUS_NUMBER      
         self.initialized = False
 
