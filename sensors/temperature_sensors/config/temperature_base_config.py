@@ -10,3 +10,5 @@ class TemperatureBaseConfig(BaseModel):
     name: str = None
     driver: Optional[TemperatureDrivers] = None
     measurement: TemperatureMeasurement = TemperatureMeasurement.Celsius
+    number_of_decimal_places:int = 2
+

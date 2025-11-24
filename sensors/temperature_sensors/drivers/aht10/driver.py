@@ -138,7 +138,8 @@ class AHT10(TemperatureDriverBase):
         return DigitalTempResponse.create(
             temperature=temperature,
             measurement=self.config.measurement,
-            humidity=humidity
+            humidity=humidity,
+            decimal_places=self.config.number_of_decimal_places
         )
 
 

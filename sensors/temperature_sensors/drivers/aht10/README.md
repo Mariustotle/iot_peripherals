@@ -30,6 +30,8 @@ Pin functions (AHT10):
             "driver": "aht10",
             "gpio_pin_sda": 2,
             "gpio_pin_scl": 3,
+            "number_of_decimal_places": 1,
+            "i2c_address": "X38",
             "measurement": "Celsius"
         }
     ]

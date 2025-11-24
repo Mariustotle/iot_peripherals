@@ -7,6 +7,8 @@ from peripherals.sensors.temperature_sensors.driver_base import TemperatureDrive
 
 import random
 
+from peripherals.sensors.temperature_sensors.response import DigitalTempResponse
+
 class TemperatureSimulator(TemperatureDriverBase):
 
     def __init__(self, config, pins:Optional[Dict[PinPosition, PinDetails]] = None):
@@ -14,11 +16,20 @@ class TemperatureSimulator(TemperatureDriverBase):
 
     def _default_reading(self) -> float:
 
+        temperature:float = None
+        humidity:float = None
+
+        humidity = round(random.uniform(70.0, 80.0), 5) 
+
         # Assume typical room temperature range
         if self.config.measurement == TemperatureMeasurement.Celsius:
-            # Room temperature between 18°C and 26°C
-            return round(random.uniform(18.0, 26.0), 2)
-        
-        elif self.unit == "Fahrenheit":
-            # Equivalent in Fahrenheit (65°F to 79°F)
-            return round(random.uniform(65.0, 79.0), 2)
+            temperature = round(random.uniform(18.0, 26.0), 4)        
+        elif self.config.measurement == TemperatureMeasurement.Fahrenheit:
+            temperature =  round(random.uniform(65.0, 79.0), 4)
+
+        return DigitalTempResponse.create(
+            temperature=temperature,
+            measurement=self.config.measurement,
+            humidity=humidity,
+            decimal_places=self.config.number_of_decimal_places
+        )

@@ -45,7 +45,8 @@ class DHT22(TemperatureDriverBase):
             return DigitalTempResponse.create(
                 temperature=temperature,
                 measurement=self.config.measurement,
-                humidity=humidity
+                humidity=humidity,
+                decimal_places=self.config.number_of_decimal_places
             )
 
         except RuntimeError as ex:
@@ -54,7 +55,8 @@ class DHT22(TemperatureDriverBase):
             return DigitalTempResponse.create(
                 temperature=None,
                 measurement=self.config.measurement,
-                humidity=None
+                humidity=None,
+                decimal_places=self.config.number_of_decimal_places
             )
 
         except Exception as ex:
@@ -62,6 +64,7 @@ class DHT22(TemperatureDriverBase):
             return DigitalTempResponse.create(
                 temperature=None,
                 measurement=self.config.measurement,
-                humidity=None
+                humidity=None,
+                decimal_places=self.config.number_of_decimal_places
             )
         

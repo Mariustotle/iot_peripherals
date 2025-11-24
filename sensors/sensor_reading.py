@@ -25,7 +25,7 @@ class SensorReading(Generic[T]):
 
         converted_value = str(self.value)
 
-        return f'>>> {converted_value}{unit_measure} <<< @ {self.read_time}'        
+        return f'>>> {converted_value} <<< @ {self.read_time}'        
 
     
     @staticmethod
